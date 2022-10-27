@@ -10,15 +10,18 @@ def update(dt):
     # Go through events that are passed to the script by the window.
     for event in pygame.event.get():
         if event.type == QUIT:
-            pygame.quit() # Opposite of pygame.init
+            pygame.quit()
             sys.exit()
     
+
 def draw(screen, boardstate):
-    screen.fill((0, 0, 0)) # Fill the screen with black.
+    screen.fill((0, 0, 0))
+
     for plant in boardstate.plants:
         pygame.draw.rect(screen, plant.color, pygame.Rect(plant.x, plant.y, plant.size, plant.size))
     for prey in boardstate.preys:
         pygame.draw.rect(screen, prey.color, pygame.Rect(prey.x, prey.y, prey.size, prey.size))
+    
     pygame.display.flip()
 
  
@@ -37,8 +40,8 @@ def runPyGame():
     
     # Main game loop.
     dt = 1/fps # dt is the time since last frame.
-    while True: # Loop forever!
-        update(dt) # You can update/draw here, I've just moved the code for neatness.
+    while True:
+        update(dt)
         draw(screen, boardState)
         boardState.update()
         

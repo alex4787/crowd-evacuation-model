@@ -1,5 +1,5 @@
 class Plants:
-    def __init__(self, type, color, size, daysToDoubling, x, y):
+    def __init__(self, type, color, size, daysToDoubling, x, y, id):
         self.type = type
         self.color = color
         self.size = size
@@ -7,6 +7,7 @@ class Plants:
         self.doublingCycle = daysToDoubling
         self.x = x
         self.y = y
+        self.id = id
 
     def __str__(self):
         return f"{self.type} : {self.color} : {self.size} : {self.daysToDoubling} : ({self.x, self.y})"
