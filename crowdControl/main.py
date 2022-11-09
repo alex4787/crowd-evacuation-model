@@ -1,3 +1,4 @@
+from gc import collect
 import sys
 import pygame
 from random import *
@@ -14,11 +15,14 @@ def update_events(dt):
     
 def draw(screen, collections):
     screen.fill((0, 0, 0))
-    for people in collections.people:
-        pygame.draw.rect(screen, people.color, pygame.Rect(people.x, people.y, people.size, people.size))
-
+    for fire in collections.fires:
+        pygame.draw.rect(screen, fire.color, fire)
+    for person in collections.people:
+        pygame.draw.rect(screen, person.color, person)
     for exit in collections.exits:
-        pygame.draw.rect(screen, exit.color, pygame.Rect(exit.x, exit.y, exit.size, exit.size)) 
+        pygame.draw.rect(screen, exit.color, exit) 
+
+    
     pygame.display.flip()
 
  
