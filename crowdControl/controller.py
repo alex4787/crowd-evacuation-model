@@ -20,7 +20,8 @@ class Controller:
 
             previous_x = person.x
             previous_y = person.y
-            person.move(self.collections.exits, fires=None, aptitude=0.9)
+            person.move(self.collections.people, self.collections.exits, fires=None, aptitude=0.9)
+
             # switch the logical tile if needed
             if person.tile_has_changed(previous_x, previous_y):
                 self.collections.grid.tiles[previous_y//100][previous_x//100].people_in_tile.remove(person)

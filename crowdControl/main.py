@@ -17,12 +17,11 @@ def draw(screen, collections):
     screen.fill((0, 0, 0))
     for fire in collections.fires:
         pygame.draw.rect(screen, fire.color, fire)
-    for person in collections.people:
-        pygame.draw.rect(screen, person.color, person)
     for exit in collections.exits:
         pygame.draw.rect(screen, exit.color, exit) 
+    for person in collections.people:
+        pygame.draw.rect(screen, person.color, person)
 
-    
     pygame.display.flip()
 
  
