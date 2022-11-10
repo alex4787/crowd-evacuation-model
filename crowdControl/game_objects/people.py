@@ -11,6 +11,9 @@ class People(Rect):
         self.y = y
         self.id = id
 
+    def tile_has_changed(self, previous_x, previous_y):
+        return self.x//100 != previous_x//100 or self.y//100 != previous_y//100
+
     def find_closest_exit(self, exits):
         closest_exit = exits[0]
         min_hyp = math.hypot(closest_exit.x - self.x, closest_exit.y - self.y)
