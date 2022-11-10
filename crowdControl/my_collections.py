@@ -21,4 +21,4 @@ class Collections:
         self.exits.append(Exit(0, 0, 1))
         self.exits.append(Exit(0, 800, 2))
 
-        #self.fires.append(Fire(460, 60))
+        # self.fires.append(Fire(460, 60))

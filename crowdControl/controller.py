@@ -9,11 +9,12 @@ class Controller:
     def update(self):
         self.tick += 1
 
-        for fire in self.collections.fires:
-            fire.update()
+        # for fire in self.collections.fires:
+        #     fire.update()
 
         for person in self.collections.people:
-            escaped = person.move(self.collections.exits, self.collections.fires, 0.9)
-            if escaped:
-                print(f'Player {person.id} Escaped')
-                self.collections.people.remove(person)
+            for exit in self.collections.exits:
+                if person.colliderect(exit):
+                    print(f'Player {person.id} Escaped')
+                    self.collections.people.remove(person)
+            person.move(self.collections.exits, fires=None, aptitude=0.9)
