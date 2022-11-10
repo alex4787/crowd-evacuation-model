@@ -1,17 +1,15 @@
 import numpy as np
 import math
+from pygame import Rect
 
-class People:
+class People(Rect):
     def __init__(self, living, x, y, id):
         self.color = (0, 255, 0)
-        self.size = 5
+        self.height = 5
+        self.width = 5
         self.x = x
         self.y = y
         self.id = id
-
-    def slope(self, x1, y1, x2, y2):
-            slope = (y2 - y1) / (x2 - x1)
-            return slope
 
     def find_closest_exit(self, exits):
         closest_exit = exits[0]
@@ -21,23 +19,47 @@ class People:
             if hyp < min_hyp:
                 closest_exit = exit
                 min_hyp = hyp
-        # self.closest_plant_id = min_distance_plant.id
         return (closest_exit.x, closest_exit.y, min_hyp)
 
-    def move(self, exits, aptitude):
+    def move(self, exits, fires, aptitude):
         x, y, min_hyp = self.find_closest_exit(exits)
-        slope = self.slope(self.x, self.y, x, y)
+
+        if min_hyp == 0: # handle this differently.
+            min_hyp = 1
+
         unit_vector_x = 3*(x - self.x)/(min_hyp)
         unit_vector_y = 3*(y - self.y)/(min_hyp)
 
-        self.x += (np.random.choice([unit_vector_x, -unit_vector_x], 1, p=[aptitude, 1-aptitude]))[0]
-        self.y += (np.random.choice([unit_vector_y, -unit_vector_y], 1, p=[aptitude, 1-aptitude]))[0]
-        # we move in the correct direction aptitude % of the time
-        # if x > self.x:
-        #     self.x += (np.random.choice([1, -1], 1, p=[aptitude, 1-aptitude]))[0]
-        # else:
-        #     self.x += (np.random.choice([1, -1], 1, p=[1-aptitude, aptitude]))[0]
-        # if y > self.y:
-        #     self.y += (np.random.choice([1, -1], 1, p=[aptitude, 1-aptitude]))[0]
-        # else:
-        #     self.y += (np.random.choice([1, -1], 1, p=[1-aptitude, aptitude]))[0]
+        if not fires:
+            self.x += (np.random.choice([unit_vector_x, -unit_vector_x], 1, p=[aptitude, 1-aptitude]))[0]
+            self.y += (np.random.choice([unit_vector_y, -unit_vector_y], 1, p=[aptitude, 1-aptitude]))[0]
+            return
+
+        # for fire in fires:
+        #     perimeter = Rect(fire.x -20, fire.y -20, fire.width + 40, fire.height + 40)
+        #     # If I am touching, then dies, switch this logic for proper death logic eventually
+        #     if self.colliderect(fire):
+        #         self.color = (255, 255, 255)
+        #     # If I am within a threshold, run from the fire
+        #     elif self.colliderect(perimeter):
+        #         # if i am under or over the fire, continue with horizontal motion
+        #         if self.x in range(fire.left, fire.right):
+        #             self.x += (np.random.choice([unit_vector_x, -unit_vector_x], 1, p=[aptitude, 1-aptitude]))[0]
+        #             # if i am above, never go down.
+        #             if self.y > fire.y:
+        #                 self.y += 2
+        #             else:
+        #                 self.y -= 2
+        #         # if i am left of the fire, run left, if right of the fire, run right. In either case, verticle as normal.
+        #         if self.y in range(fire.top, fire.bottom):
+        #             self.y += (np.random.choice([unit_vector_y, -unit_vector_y], 1, p=[aptitude, 1-aptitude]))[0]
+        #             if self.x > fire.x:
+        #                 self.x += 2
+        #             else:
+        #                 self.x -= 2
+
+        #     # else move normally
+        #     else:
+        #         self.x += (np.random.choice([unit_vector_x, -unit_vector_x], 1, p=[aptitude, 1-aptitude]))[0]
+        #         self.y += (np.random.choice([unit_vector_y, -unit_vector_y], 1, p=[aptitude, 1-aptitude]))[0]
+
