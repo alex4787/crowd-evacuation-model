@@ -1,3 +1,8 @@
+# from game_objects.people import People
+# from game_objects.exit import Exit
+# from game_objects.fire import Fire
+# from typing import List, Tuple
+        
         # for fire in fires:
         #     perimeter = Rect(fire.x -20, fire.y -20, fire.width + 40, fire.height + 40)
         #     # If I am touching, then dies, switch this logic for proper death logic eventually

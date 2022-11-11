@@ -1,18 +1,19 @@
 from pygame import Rect
 
-from density_grid.tile import Tile
+from tile import Tile
+from typing import List
 
 class Grid():
-    def __init__(self):
-        self.tiles = []
+    def __init__(self) -> None:
+        self.tiles: List[List[Tile]] = [] # shoudl this start as [[]] ?
 
-        for row in range(10):
-            self.tiles.append([])
-            for col in range(10):
+        for row in range(10): #therefore, should this only go to 9 ?
+            self.tiles.append([]) 
+            for col in range(10): #again, to 10 or 9 ?
                 self.tiles[row].append(Tile(col*100, row*100))
 
-        for row in range(10):
-            for col in range(10):
+        for row in range(10): # 10 or 9 ?
+            for col in range(10): # 10 or 9 ?
                 tile = self.tiles[row][col]
                 
                 #in the first row

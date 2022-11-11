@@ -1,27 +1,27 @@
-from game_objects.people import People
-from behaviours.move_to_exit import MoveToExit
-from game_objects.exit import Exit
-from game_objects.fire import Fire
-from density_grid.grid import Grid
+from game_objects import People, Exit, Fire, Exit
+from density_grid import Grid
+from behaviours import MoveToExit
+
+from typing import List
 from random import randint
 
 class Collections:
-    def __init__(self, width, height):
-        self.grid = Grid()
+    def __init__(self, width: int, height: int) -> None:
+        self.grid: Grid = Grid()
 
         #populations
-        self.people = []
-        self.next_people_id = 1
+        self.people: List[People] = []
+        self.next_people_id: int = 1
 
-        self.exits = []
-        self.next_exit_id = 1
+        self.exits: List[Exit] = []
+        self.next_exit_id: int = 1
 
-        self.fires = []
+        self.fires: List[Fire] = []
 
         self.exits.append(Exit(0, 0, 1))
         self.exits.append(Exit(0, 800, 2))
 
-        for i in range(100):
+        for i in range(500):
             person = People(randint(0, width-1), randint(0, height-1), self.next_people_id, MoveToExit())
             self.people.append(person)
             self.next_people_id+=1

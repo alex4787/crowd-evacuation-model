@@ -1,12 +1,13 @@
-from behaviours.behaviour import Behaviour
+from behaviours import Behaviour
+from typing import List, Tuple
 import numpy as np
 import math
 
 class MoveToExit(Behaviour):  
-    def __init__(self):
+    def __init__(self) -> None:
         return
 
-    def find_closest_exit(self, person, exits):
+    def find_closest_exit(self, person, exits) -> Tuple[int, int, int]:
         closest_exit = exits[0]
         min_hyp = math.hypot(closest_exit.x - person.x, closest_exit.y - person.y)
         for exit in exits:
