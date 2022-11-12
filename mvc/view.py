@@ -3,7 +3,7 @@ import sys
 import pygame
 from random import *
 from pygame.locals import *
-from . import Collections, Controller
+from mvc import Collections, Controller
 
 class View():
     def update_events(self, dt):

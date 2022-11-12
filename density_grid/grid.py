@@ -1,6 +1,6 @@
 from pygame import Rect
 
-from tile import Tile
+from density_grid.tile import Tile
 from typing import List
 
 class Grid():

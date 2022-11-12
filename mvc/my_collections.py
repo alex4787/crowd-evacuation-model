@@ -1,4 +1,4 @@
-from game_objects import People, Exit, Fire, Exit
+from game_objects import People, Exit, Fire
 from density_grid import Grid
 from behaviours import MoveToExit
 

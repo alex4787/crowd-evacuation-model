@@ -1,2 +1,2 @@
-from .grid import Grid
-from .tile import Tile
+from density_grid.grid import Grid
+from density_grid.tile import Tile

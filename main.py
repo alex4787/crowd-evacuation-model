@@ -1,4 +1,4 @@
-from .mvc import View
+from mvc import View
 
 view = View()
 view.runPyGame()

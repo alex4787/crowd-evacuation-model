@@ -1,3 +1,3 @@
-from .my_collections import Collections
-from .controller import Controller
-from .view import View
+from mvc.my_collections import Collections
+from mvc.controller import Controller
+from mvc.view import View

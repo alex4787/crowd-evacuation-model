@@ -1,4 +1,4 @@
-from .. import Collections
+from mvc import Collections
 
 
 class Controller:
