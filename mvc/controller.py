@@ -1,10 +1,12 @@
-class Controller:
-    def __init__(self, collections, width, height):
-        self.collections = collections
-        self.width = width
-        self.height = height
+from mvc import Collections
 
-        self.tick = 0
+
+class Controller:
+    def __init__(self, collections: Collections, width: int, height: int) -> None:
+        self.collections: Collections = collections
+        self.width: int = width
+        self.height: int = height
+        self.tick: int = 0
 
     def update(self):
         self.tick += 1
@@ -20,7 +22,9 @@ class Controller:
 
             previous_x = person.x
             previous_y = person.y
-            person.move(self.collections.exits, fires=None, aptitude=0.9)
+
+            person.move(self.collections.people, self.collections.exits, fires=None, aptitude=0.9)
+
             # switch the logical tile if needed
             if person.tile_has_changed(previous_x, previous_y):
                 self.collections.grid.tiles[previous_y//100][previous_x//100].people_in_tile.remove(person)

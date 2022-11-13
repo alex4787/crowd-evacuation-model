@@ -1,43 +1,8 @@
-import numpy as np
-import math
-from pygame import Rect
-
-class People(Rect):
-    def __init__(self, living, x, y, id):
-        self.color = (0, 255, 0)
-        self.height = 5
-        self.width = 5
-        self.x = x
-        self.y = y
-        self.id = id
-
-    def tile_has_changed(self, previous_x, previous_y):
-        return self.x//100 != previous_x//100 or self.y//100 != previous_y//100
-
-    def find_closest_exit(self, exits):
-        closest_exit = exits[0]
-        min_hyp = math.hypot(closest_exit.x - self.x, closest_exit.y - self.y)
-        for exit in exits:
-            hyp = math.hypot(exit.x - self.x, exit.y - self.y)
-            if hyp < min_hyp:
-                closest_exit = exit
-                min_hyp = hyp
-        return (closest_exit.x, closest_exit.y, min_hyp)
-
-    def move(self, exits, fires, aptitude):
-        x, y, min_hyp = self.find_closest_exit(exits)
-
-        if min_hyp == 0: # handle this differently.
-            min_hyp = 1
-
-        unit_vector_x = 3*(x - self.x)/(min_hyp)
-        unit_vector_y = 3*(y - self.y)/(min_hyp)
-
-        if not fires:
-            self.x += (np.random.choice([unit_vector_x, -unit_vector_x], 1, p=[aptitude, 1-aptitude]))[0]
-            self.y += (np.random.choice([unit_vector_y, -unit_vector_y], 1, p=[aptitude, 1-aptitude]))[0]
-            return
-
+# from game_objects.people import People
+# from game_objects.exit import Exit
+# from game_objects.fire import Fire
+# from typing import List, Tuple
+        
         # for fire in fires:
         #     perimeter = Rect(fire.x -20, fire.y -20, fire.width + 40, fire.height + 40)
         #     # If I am touching, then dies, switch this logic for proper death logic eventually
@@ -65,4 +30,3 @@ class People(Rect):
         #     else:
         #         self.x += (np.random.choice([unit_vector_x, -unit_vector_x], 1, p=[aptitude, 1-aptitude]))[0]
         #         self.y += (np.random.choice([unit_vector_y, -unit_vector_y], 1, p=[aptitude, 1-aptitude]))[0]
-
