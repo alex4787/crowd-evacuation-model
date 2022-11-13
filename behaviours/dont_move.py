@@ -6,7 +6,6 @@ class DontMove(Behaviour):
     def __init__(self):
         return
 
-    def go(self, person, exits, fires, aptitude):
-        print(f'player {person.id} Can\'t See')
+    def go(self, person, exits, fires, aptitude, current_tile):
         person.color = (0, 0, 200)
         return
