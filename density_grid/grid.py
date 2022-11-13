@@ -20,7 +20,7 @@ class Grid():
                 if row != 0:
                     tile.neighbours.append(self.tiles[row-1][col])
                 
-                #in ht elast row
+                #in the last row
                 if row != 9:
                     tile.neighbours.append(self.tiles[row+1][col])
                 

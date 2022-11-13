@@ -11,23 +11,31 @@ class Controller:
     def update(self):
         self.tick += 1
 
-        # for fire in self.collections.fires:
-        #     fire.update()
+        # instead of recalculating this every time, is there a way to update it on the go?
+        for row in range(10): # 10 or 9 ?
+            for col in range(10): # 10 or 9 ?
+                self.collections.grid.tiles[row][col].update_average_direction()
 
         for person in self.collections.people:
             for exit in self.collections.exits:
                 if person.colliderect(exit):
-                    print(f'Player {person.id} Escaped')
                     self.collections.people.remove(person)
 
-            previous_x = person.x
-            previous_y = person.y
-
-            person.move(self.collections.people, self.collections.exits, fires=None, aptitude=0.9)
+            current_tile = self.collections.grid.tiles[person.x//100][person.y//100]
+            
+            person.move(
+                self.collections.people,
+                self.collections.exits,
+                fires=None,
+                aptitude=0.9,
+                current_tile=current_tile,
+                width = self.width,
+                height = self.height
+            )
 
             # switch the logical tile if needed
-            if person.tile_has_changed(previous_x, previous_y):
-                self.collections.grid.tiles[previous_y//100][previous_x//100].people_in_tile.remove(person)
+            if person.tile_has_changed():
+                self.collections.grid.tiles[person.previous_y//100][person.previous_x//100].people_in_tile.remove(person)
                 self.collections.grid.tiles[person.y//100][person.x//100].people_in_tile.append(person)
                 
 
