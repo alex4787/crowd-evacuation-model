@@ -1,4 +1,7 @@
 from mvc import View
 
+#Game variables
+agent_count = 250
+
 view = View()
-view.runPyGame()
+view.runPyGame(agent_count)
