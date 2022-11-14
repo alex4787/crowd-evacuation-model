@@ -1,9 +1,11 @@
 from mvc import Collections
+from statboard import StatBoard
 
 
 class Controller:
-    def __init__(self, collections: Collections, width: int, height: int) -> None:
+    def __init__(self, collections: Collections, width: int, height: int, stats: StatBoard) -> None:
         self.collections: Collections = collections
+        self.stats: StatBoard = stats
         self.width: int = width
         self.height: int = height
         self.tick: int = 0
@@ -19,6 +21,8 @@ class Controller:
         for person in self.collections.people:
             for exit in self.collections.exits:
                 if person.colliderect(exit):
+                    self.stats.escape_count += 1
+                    self.stats.remaining_count -= 1
                     self.collections.people.remove(person)
 
             current_tile = self.collections.grid.tiles[person.x//100][person.y//100]

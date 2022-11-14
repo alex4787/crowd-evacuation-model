@@ -1,0 +1,1 @@
+from statboard.statboard import StatBoard

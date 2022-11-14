@@ -86,8 +86,8 @@ class People(Rect):
                 )
 
         else:
-            if not isinstance(self._behaviour, MoveWithCrowd):
-                self._behaviour = MoveWithCrowd()
+            if not isinstance(self._behaviour, MoveToDensity):
+                self._behaviour = MoveToDensity()
 
             self._behaviour.go(
                 exits=availible_exits,
