@@ -2,23 +2,21 @@ from behaviours import Behaviour
 import numpy as np
 import math
 
-MAX_DENSITY = 5
-
-class MoveToDensity(Behaviour):  
+class FollowTheLeader(Behaviour):  
     def __init__(self):
         return
 
-    def go(self, person, exits, fires, aptitude, current_tile, width, height):
+    def go(self, person, exits, fires, aptitude, current_tile, width, height, previous_tile):
         person.color = (0, 0, 200)
 
         # find high density neighbour tiles, if tie, draw randomly from tiers
         tied_tile_densities = []
         curr_highest_density = 0
         for neighbour in current_tile.neighbours:
-            if neighbour.density > MAX_DENSITY:
+            if neighbour == previous_tile:
                 continue
             if neighbour.density > curr_highest_density:
-                curr_highest_density = neighbour.density
+                curr_highest_density = sum(neighbour.heatmap)
                 tied_tile_densities = [neighbour]
             elif neighbour.density == curr_highest_density:
                 tied_tile_densities.append(neighbour)

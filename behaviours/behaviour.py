@@ -12,17 +12,18 @@ class Behaviour(ABC):
     def go(
         self,
         person: People,
-        exits: List[Exit],
         fires: List[Fire],
         aptitude: int,
-        current_tile: Tile,
         width: int,
-        height: int
+        height: int,
+        current_tile: Tile,
+        exits: List[Exit] = None,
+        previous_tile: Tile = None,
         ) -> None:
         pass
 
     def out_of_bounds(self, new_x: int, new_y: int, width: int, height: int) -> bool:
-        if (new_x < 0 or new_x > width or new_y < 0 or new_y > height):
+        if (new_x < 0 or new_x >= width or new_y < 0 or new_y >= height):
             return True
         return False
 
