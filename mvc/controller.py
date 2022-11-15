@@ -17,6 +17,8 @@ class Controller:
         for row in range(10): # 10 or 9 ?
             for col in range(10): # 10 or 9 ?
                 self.collections.grid.tiles[row][col].update_average_direction()
+                self.collections.grid.tiles[row][col].update_density()
+
 
         for person in self.collections.people:
             for exit in self.collections.exits:
@@ -24,23 +26,27 @@ class Controller:
                     self.stats.escape_count += 1
                     self.stats.remaining_count -= 1
                     self.collections.people.remove(person)
-
-            current_tile = self.collections.grid.tiles[person.x//100][person.y//100]
             
             person.move(
                 self.collections.people,
                 self.collections.exits,
                 fires=None,
                 aptitude=0.9,
-                current_tile=current_tile,
+                current_tile=self.collections.maps.person_to_tiles[person].current,
+                previous_tile=self.collections.maps.person_to_tiles[person].previous,
                 width = self.width,
                 height = self.height
             )
 
             # switch the logical tile if needed
             if person.tile_has_changed():
-                self.collections.grid.tiles[person.previous_y//100][person.previous_x//100].people_in_tile.remove(person)
-                self.collections.grid.tiles[person.y//100][person.x//100].people_in_tile.append(person)
+                previous_tile = self.collections.maps.person_to_tiles[person].current
+                previous_tile.remove_person(person)
+                self.collections.maps.person_to_tiles[person].previous = previous_tile
+                
+                current_tile = self.collections.grid.tiles[person.y//100][person.x//100]
+                current_tile.add_person(person)
+                self.collections.maps.person_to_tiles[person].current = current_tile
                 
 
 

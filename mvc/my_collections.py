@@ -1,6 +1,7 @@
 from game_objects import People, Exit, Fire
 from density_grid import Grid
 from behaviours import MoveToExit
+from density_grid import Maps, Tiles
 
 from typing import List
 from random import randint
@@ -19,12 +20,16 @@ class Collections:
         self.fires: List[Fire] = []
 
         self.exits.append(Exit(0, 0, 1))
-        self.exits.append(Exit(950, 950, 2))
+        self.exits.append(Exit(980, 980, 2))
 
-        for i in range(300):
+        self.maps: Maps = Maps()
+
+        for i in range(250):
             person = People(randint(0, width-1), randint(0, height-1), self.next_people_id, MoveToExit())
             self.people.append(person)
             self.next_people_id+=1
-            self.grid.tiles[person.y//100][person.x//100].people_in_tile.append(person)
+            tile = self.grid.tiles[person.y//100][person.x//100]
+            tile.add_person(person)
+            self.maps.person_to_tiles[person] = Tiles(None, tile)
 
         # self.fires.append(Fire(460, 60))

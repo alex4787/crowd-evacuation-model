@@ -18,6 +18,7 @@ class Tile(Rect):
         self.density: int = len(self.people_in_tile)
         self.average_direction: Tuple[int, int] = (0, 0)
         self.neighbours: List[Tile] = []
+        self.heatmap: List[int] = []
 
     def update_average_direction(self):
         combined_direction = (0, 0)
@@ -33,10 +34,24 @@ class Tile(Rect):
         unit_vector_x = 3*(x)/(hyp)
         unit_vector_y = 3*(y)/(hyp)
         self.average_direction = (unit_vector_x, unit_vector_y)
-
-
-
-
-
         return
+
+    def update_density(self):
+        self.density = len(self.people_in_tile)
+
+    def update_heatmap(self):
+        new_heatmap = []
+        for heat in self.heatmap:
+            new_heat = heat - 1
+            if new_heat > 0:
+                new_heatmap.append(new_heat)
+
+        self.heatmap = new_heatmap
+
+    def add_person(self, person):
+        self.people_in_tile.append(person)
+        self.heatmap.append(4)
+
+    def remove_person(self, person):
+        self.people_in_tile.remove(person)
 

@@ -26,6 +26,7 @@ class MoveWithCrowd(Behaviour):
         y_motion = (np.random.choice([unit_vector_y, -unit_vector_y], 1, p=[aptitude, 1-aptitude]))[0]
         person.x += x_motion
         person.y += y_motion
+        
         if self.out_of_bounds(person.x, person.y, width, height):
             person.x -= x_motion
             person.y -= y_motion
