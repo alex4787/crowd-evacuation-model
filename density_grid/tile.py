@@ -17,7 +17,7 @@ class Tile(Rect):
         self.people_in_tile: List[People] = []
         self.density: int = len(self.people_in_tile)
         self.average_direction: Tuple[int, int] = (0, 0)
-        self.neighbours: List[Tile] = []
+        self.neighbours: dict[str, Tile] = {}
         self.heatmap: List[int] = []
 
     def update_average_direction(self):

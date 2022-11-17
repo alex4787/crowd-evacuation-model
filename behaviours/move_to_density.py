@@ -14,7 +14,7 @@ class MoveToDensity(Behaviour):
         # find high density neighbour tiles, if tie, draw randomly from tiers
         tied_tile_densities = []
         curr_highest_density = 0
-        for neighbour in current_tile.neighbours:
+        for neighbour in current_tile.neighbours.values():
             if neighbour.density > MAX_DENSITY:
                 continue
             if neighbour.density > curr_highest_density:

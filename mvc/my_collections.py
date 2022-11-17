@@ -25,7 +25,7 @@ class Collections:
         self.maps: Maps = Maps()
 
         for i in range(250):
-            person = People(randint(0, width-1), randint(0, height-1), self.next_people_id, MoveToExit())
+            person = People(randint(0, width-1), randint(0, height-1), self.next_people_id, behaviour=None)
             self.people.append(person)
             self.next_people_id+=1
             tile = self.grid.tiles[person.y//100][person.x//100]
