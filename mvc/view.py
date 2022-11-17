@@ -16,6 +16,8 @@ class View():
         
     def draw(self, screen: pygame.Surface, collections: Collections, stats: StatBoard):
         screen.fill((0, 0, 0))
+        for obstacle in collections.grid.obstacles:
+            pygame.draw.rect(screen, obstacle.color, obstacle)
         for fire in collections.fires:
             pygame.draw.rect(screen, fire.color, fire)
         for exit in collections.exits:

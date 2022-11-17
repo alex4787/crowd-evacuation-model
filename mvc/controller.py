@@ -14,8 +14,8 @@ class Controller:
         self.tick += 1
 
         # instead of recalculating this every time, is there a way to update it on the go?
-        for row in range(10): # 10 or 9 ?
-            for col in range(10): # 10 or 9 ?
+        for row in range(20): # 10 or 9 ?
+            for col in range(20): # 10 or 9 ?
                 self.collections.grid.tiles[row][col].update_average_direction()
                 self.collections.grid.tiles[row][col].update_density()
 
@@ -30,6 +30,7 @@ class Controller:
             person.move(
                 self.collections.people,
                 self.collections.exits,
+                obstacles = self.collections.grid.obstacles,
                 fires=None,
                 aptitude=0.9,
                 current_tile=self.collections.maps.person_to_tiles[person].current,
@@ -44,7 +45,7 @@ class Controller:
                 previous_tile.remove_person(person)
                 self.collections.maps.person_to_tiles[person].previous = previous_tile
                 
-                current_tile = self.collections.grid.tiles[person.y//100][person.x//100]
+                current_tile = self.collections.grid.tiles[person.y//50][person.x//50]
                 current_tile.add_person(person)
                 self.collections.maps.person_to_tiles[person].current = current_tile
                 

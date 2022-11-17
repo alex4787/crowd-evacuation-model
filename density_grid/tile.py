@@ -9,9 +9,11 @@ if TYPE_CHECKING:
 from typing import List
 
 class Tile(Rect):
-    def __init__(self, x: int, y: int) -> None:
-        self.height: int = 100
-        self.width: int = 100 
+    def __init__(self, x: int, y: int, obstacle: bool = False) -> None:
+        self.obstacle: bool = obstacle
+        self.color = (255, 255, 255)
+        self.height: int = 50
+        self.width: int = 50 
         self.x: int = x
         self.y: int = y
         self.people_in_tile: List[People] = []

@@ -3,7 +3,7 @@ from typing import Tuple, List
 from pygame import Rect
 from behaviours import Behaviour, MoveToExit, DontMove, MoveToDensity, MoveWithCrowd, FollowTheLeader, BestOption
 from game_objects import Exit, Fire
-from density_grid import Tile
+from density_grid import Tile, Grid
 import math
 
 class People(Rect):
@@ -31,7 +31,7 @@ class People(Rect):
         self._behaviour = behaviour
 
     def tile_has_changed(self) -> bool:
-        return self.x//100 != self.previous_x//100 or self.y//100 != self.previous_y//100
+        return self.x//50 != self.previous_x//50 or self.y//50 != self.previous_y//50
 
     def is_me(self: People, other: People) -> bool:
         if self.id == other.id:
@@ -41,25 +41,26 @@ class People(Rect):
     def distance(self, seg):
         return math.sqrt((seg[0][0] - seg[1][0])**2 + (seg[0][1] - seg[1][1])**2)
 
-    def is_other_in_the_way(self, other: People, line: Tuple[Tuple[int, int], Tuple[int, int]]) -> bool:
+    def is_other_in_the_way(self, other: Rect, line: Tuple[Tuple[int, int], Tuple[int, int]]) -> bool:
         seg = other.clipline(line)
         if seg == () or self.distance(seg) < (math.sqrt(2))*self.width/2:
             return False
         return True
 
-    def is_valid_line_of_sight(self, line: Tuple[Tuple[int, int], Tuple[int, int]], people: List[People]) -> bool:
-        is_valid = True
+    def is_valid_line_of_sight(self, line: Tuple[Tuple[int, int], Tuple[int, int]], people: List[People], obstacles: List[Tile]) -> bool:
         for other in people: 
             if not self.is_me(other) and self.is_other_in_the_way(other, line):
-                is_valid = False
-                break
-        return is_valid
+                return False
+        for obstacle in obstacles:
+            if self.is_other_in_the_way(obstacle, line):
+                return False
+        return True
 
-    def exits_in_sight(self, people: List[People], exits: List[Exit]) -> List[Exit]:
+    def exits_in_sight(self, people: List[People], exits: List[Exit], obstacles: List[Tile]) -> List[Exit]:
         exits_in_sight = []
         for exit in exits:
             line = ((self.centerx, self.centery), (exit.centerx, exit.centery))
-            if self.is_valid_line_of_sight(line, people):
+            if self.is_valid_line_of_sight(line, people, obstacles):
                 exits_in_sight.append(exit)  
         return exits_in_sight
 
@@ -68,6 +69,7 @@ class People(Rect):
             people: List[People],
             exits: List[Exit],
             fires: List[Fire],
+            obstacles: List[Tile],
             aptitude: float,
             current_tile: Tile,
             previous_tile: Tile,
@@ -80,7 +82,7 @@ class People(Rect):
         temp_y = self.y
 
         # Update best option
-        availible_exits = self.exits_in_sight(people, exits=exits)
+        availible_exits = self.exits_in_sight(people, exits=exits, obstacles=obstacles)
         if not self.best_option and availible_exits:
             self.best_option = availible_exits[0]
 
