@@ -1,4 +1,9 @@
 from behaviours import Behaviour
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from game_objects import People
+
 import numpy as np
 import math
 from math import pi
@@ -15,7 +20,7 @@ angle_to_list_of_neighbours = [
     (pi, ['NW', 'W', 'SW']),
 ]
 
-
+MAX_DENSITY = 4
 
 class BestOption(Behaviour):  
     def __init__(self, best_option):
@@ -41,17 +46,21 @@ class BestOption(Behaviour):
         
         return desired_neighbours
 
+    def undo_motion(self, person, x: int, y: int):
+        person.x -= x
+        person.y -= y
 
     def go(self, person, exits, fires, aptitude, current_tile, width, height, previous_tile):
         person.color = (0, 0, 200)
 
         # find high density neighbour tiles, if tie, draw randomly from tiers
+        
         tied_tile_densities = []
         curr_highest_density = 0
         desired_neighbours = self.convert_compass_to_neighbours(person, current_tile) if self.best_option else current_tile.neighbours.values()
         for neighbour in desired_neighbours:
-            # if neighbour == previous_tile:
-            #     continue
+            if neighbour.density >= MAX_DENSITY:
+                continue
             if neighbour.density > curr_highest_density:
                 curr_highest_density = sum(neighbour.heatmap)
                 tied_tile_densities = [neighbour]
@@ -76,6 +85,13 @@ class BestOption(Behaviour):
         y_motion = (np.random.choice([unit_vector_y, -unit_vector_y], 1, p=[1, 0]))[0]
         person.x += x_motion
         person.y += y_motion
+
+        if not tied_tile_densities:
+            # undo movement if you colided with another person.
+            for other in current_tile.people_in_tile:
+                if other.colliderect(person) and not person.is_me(other):
+                    self.undo_motion(person, x_motion, y_motion)
+                    return
+
         if self.out_of_bounds(person.x, person.y, width, height):
-            person.x -= x_motion
-            person.y -= y_motion
+            self.undo_motion(person, x_motion, y_motion)
