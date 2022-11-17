@@ -1,30 +1,35 @@
 from behaviours import Behaviour
+from game_objects import Exit
 from typing import List, Tuple
 import numpy as np
 import math
 
 class MoveToExit(Behaviour):  
-    def __init__(self) -> None:
-        return
+    def __init__(self, best_option: Exit) -> None:
+        self.best_option = best_option
 
-    def find_closest_exit(self, person, exits) -> Tuple[int, int, int]:
-        closest_exit = exits[0]
-        min_hyp = math.hypot(closest_exit.x - person.x, closest_exit.y - person.y)
-        for exit in exits:
-            hyp = math.hypot(exit.x - person.x, exit.y - person.y)
-            if hyp < min_hyp:
-                closest_exit = exit
-                min_hyp = hyp
-        return (closest_exit.centerx, closest_exit.centery, min_hyp)
+    # def find_closest_exit(self, person, exits) -> Tuple[int, int, int]:
+    #     closest_exit = exits[0]
+    #     min_hyp = math.hypot(closest_exit.x - person.x, closest_exit.y - person.y)
+    #     for exit in exits:
+    #         hyp = math.hypot(exit.x - person.x, exit.y - person.y)
+    #         if hyp < min_hyp:
+    #             closest_exit = exit
+    #             min_hyp = hyp
+    #     return (closest_exit.centerx, closest_exit.centery, min_hyp)
+
+    def find_best_option_data(self, person) -> Tuple[int, int, int]:
+        hyp = math.hypot(self.best_option.x - person.x, self.best_option.y - person.y)
+        return (self.best_option.centerx, self.best_option.centery, hyp)
 
     def go(self, person, exits, fires, aptitude, current_tile, width, height):
-        x, y, min_hyp = self.find_closest_exit(person, exits)
+        x, y, hyp = self.find_best_option_data(person)
 
-        if min_hyp == 0:
+        if hyp == 0:
             return 
 
-        unit_vector_x = 3*(x - person.x)/(min_hyp)
-        unit_vector_y = 3*(y - person.y)/(min_hyp)
+        unit_vector_x = 3*(x - person.x)/(hyp)
+        unit_vector_y = 3*(y - person.y)/(hyp)
 
         person.color = (0, 255, 0)
 

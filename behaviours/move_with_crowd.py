@@ -11,7 +11,7 @@ class MoveWithCrowd(Behaviour):
 
         # we re-calculate this for every agent in the tile, maybe we could just calculate this once per tile per iteraiton?
         combined_direction = (0, 0)
-        for neighbour in current_tile.neighbours:
+        for neighbour in current_tile.neighbours.values():
             combined_direction = tuple(map(lambda i, j: i + j, combined_direction, neighbour.average_direction))
         
         x = combined_direction[0]

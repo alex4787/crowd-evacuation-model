@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import Tuple, List
 from pygame import Rect
-from behaviours import Behaviour, MoveToExit, DontMove, MoveToDensity, MoveWithCrowd, FollowTheLeader
+from behaviours import Behaviour, MoveToExit, DontMove, MoveToDensity, MoveWithCrowd, FollowTheLeader, BestOption
 from game_objects import Exit, Fire
 from density_grid import Tile
 import math
@@ -17,6 +17,7 @@ class People(Rect):
         self.previous_y: int = y
         self.id: int = id
         self._behaviour: Behaviour = behaviour
+        self.best_option: Exit = None
 
     def __hash__(self):
         return self.id
@@ -78,11 +79,24 @@ class People(Rect):
         temp_x = self.x
         temp_y = self.y
 
-        # Execute proper movement strategy
+        # Update best option
         availible_exits = self.exits_in_sight(people, exits=exits)
-        if availible_exits:
+        if not self.best_option and availible_exits:
+            self.best_option = availible_exits[0]
+
+        best_option_distance = self.distance([[self.x, self.y], [self.best_option.x, self.best_option.y]]) if self.best_option else None
+        for exit in availible_exits:
+            exit_distance = self.distance([[self.x, self.y], [exit.x, exit.y]])
+            if exit_distance < best_option_distance:
+                self.best_option = exit
+                best_option_distance = exit_distance
+
+        # execute behaviour
+        if self.best_option in availible_exits:
             if not isinstance(self._behaviour, MoveToExit):
-                self._behaviour = MoveToExit()
+                self._behaviour = MoveToExit(best_option=self.best_option)
+            else:
+                self._behaviour.best_option = self.best_option
 
             self._behaviour.go(
                 exits=availible_exits,
@@ -95,8 +109,10 @@ class People(Rect):
                 )
 
         else:
-            if not isinstance(self._behaviour, FollowTheLeader):
-                self._behaviour = FollowTheLeader()
+            if not isinstance(self._behaviour, BestOption):
+                self._behaviour = BestOption(best_option=self.best_option)
+            else:
+                self._behaviour.best_option = self.best_option
 
             self._behaviour.go(
                 exits=availible_exits,

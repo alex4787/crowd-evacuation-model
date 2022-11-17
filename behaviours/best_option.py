@@ -1,10 +1,46 @@
 from behaviours import Behaviour
 import numpy as np
 import math
+from math import pi
 
-class FollowTheLeader(Behaviour):  
-    def __init__(self):
+angle_to_list_of_neighbours = [
+    (-7*pi/8, ['NW', 'W', 'SW']),
+    (-5*pi/8, ['S', 'W', 'SW']),
+    (-3*pi/8, ['SW', 'S', 'SE']),
+    (-1*pi/8, ['S', 'SE', 'E']),
+    (1*pi/8, ['SE', 'E', 'NE']),
+    (3*pi/8, ['E', 'NE', 'N']),
+    (5*pi/8, ['NE', 'N', 'NW']),
+    (7*pi/8, ['N', 'NW', 'W']),
+    (pi, ['NW', 'W', 'SW']),
+]
+
+
+
+class BestOption(Behaviour):  
+    def __init__(self, best_option):
+        self.best_option = best_option
         return
+
+    def find_compass_from_angle(self, person):
+        delta_x = self.best_option.x - person.x
+        delta_y = -1*(self.best_option.y - person.y)
+        angle = np.arctan2(delta_y, delta_x) # value from -PI to PI
+
+        for upper_limit, neighbours in angle_to_list_of_neighbours:
+            if angle <= upper_limit:
+                return neighbours
+
+    def convert_compass_to_neighbours(self, person, current_tile):
+        compass = self.find_compass_from_angle(person)
+        desired_neighbours = []
+        for direction in compass:
+            neighbour = current_tile.neighbours.get(direction)
+            if neighbour:
+                desired_neighbours.append(neighbour)
+        
+        return desired_neighbours
+
 
     def go(self, person, exits, fires, aptitude, current_tile, width, height, previous_tile):
         person.color = (0, 0, 200)
@@ -12,9 +48,10 @@ class FollowTheLeader(Behaviour):
         # find high density neighbour tiles, if tie, draw randomly from tiers
         tied_tile_densities = []
         curr_highest_density = 0
-        for neighbour in current_tile.neighbours.values():
-            if neighbour == previous_tile:
-                continue
+        desired_neighbours = self.convert_compass_to_neighbours(person, current_tile) if self.best_option else current_tile.neighbours.values()
+        for neighbour in desired_neighbours:
+            # if neighbour == previous_tile:
+            #     continue
             if neighbour.density > curr_highest_density:
                 curr_highest_density = sum(neighbour.heatmap)
                 tied_tile_densities = [neighbour]
