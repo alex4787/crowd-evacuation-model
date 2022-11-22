@@ -13,9 +13,8 @@ class Controller:
     def update(self):
         self.tick += 1
 
-        # instead of recalculating this every time, is there a way to update it on the go?
-        for row in range(20): # 10 or 9 ?
-            for col in range(20): # 10 or 9 ?
+        for row in range(20):
+            for col in range(20):
                 self.collections.grid.tiles[row][col].update_average_direction()
                 self.collections.grid.tiles[row][col].update_density()
 

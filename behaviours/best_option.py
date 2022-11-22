@@ -7,17 +7,17 @@ if TYPE_CHECKING:
 import numpy as np
 import math
 from math import pi
+import random
 
-angle_to_list_of_neighbours = [
-    (-7*pi/8, ['NW', 'W', 'SW']),
-    (-5*pi/8, ['S', 'W', 'SW']),
-    (-3*pi/8, ['SW', 'S', 'SE']),
-    (-1*pi/8, ['S', 'SE', 'E']),
-    (1*pi/8, ['SE', 'E', 'NE']),
-    (3*pi/8, ['E', 'NE', 'N']),
-    (5*pi/8, ['NE', 'N', 'NW']),
-    (7*pi/8, ['N', 'NW', 'W']),
-    (pi, ['NW', 'W', 'SW']),
+davinci_wheel = [
+    (-3/4*pi, ['W', 'S', 'N', 'E']),
+    (-1/2*pi, ['S', 'W', 'E', 'N']),
+    (-1/4*pi, ['S', 'E', 'W', 'N']),
+    (0, ['E', 'S', 'N', 'W']),
+    (1/4*pi, ['E', 'N', 'S', 'W']),
+    (1/2*pi, ['N', 'E', 'W', 'S']),
+    (3/4*pi, ['N', 'W', 'E', 'S']),
+    (pi, ['W', 'N', 'S', 'E']),
 ]
 
 MAX_DENSITY = 4
@@ -32,18 +32,17 @@ class BestOption(Behaviour):
         delta_y = -1*(self.best_option.y - person.y)
         angle = np.arctan2(delta_y, delta_x) # value from -PI to PI
 
-        for upper_limit, neighbours in angle_to_list_of_neighbours:
+        for upper_limit, compass in davinci_wheel:
             if angle <= upper_limit:
-                return neighbours
+                return compass
 
     def convert_compass_to_neighbours(self, person, current_tile):
         compass = self.find_compass_from_angle(person)
         desired_neighbours = []
         for direction in compass:
             neighbour = current_tile.neighbours.get(direction)
-            if neighbour:
-                desired_neighbours.append(neighbour)
-        
+            desired_neighbours.append(neighbour)
+
         return desired_neighbours
 
     def undo_motion(self, person, x: int, y: int):
@@ -54,24 +53,38 @@ class BestOption(Behaviour):
         person.color = (0, 0, 200)
 
         # find high density neighbour tiles, if tie, draw randomly from tiers
+        if self.best_option:
+            prioritized_neighbours = self.convert_compass_to_neighbours(person, current_tile) #[Tile?, Tile?, Tile?, Tile?]
+            neighbours_to_consider = prioritized_neighbours[0:2]
+            random.shuffle(neighbours_to_consider)
+        else:
+            neighbours_to_consider = list(current_tile.neighbours.values())
+            random.shuffle(neighbours_to_consider)
         
-        tied_tile_densities = []
+        neighbour_to_follow = None
         curr_highest_density = 0
-        desired_neighbours = self.convert_compass_to_neighbours(person, current_tile) if self.best_option else current_tile.neighbours.values()
-        for neighbour in desired_neighbours:
+
+        for neighbour in neighbours_to_consider:
+            if not neighbour:
+                continue
             if neighbour.density >= MAX_DENSITY:
                 continue
-            if neighbour.density > curr_highest_density:
+            if neighbour.obstacle:
+                continue
+            if not neighbour_to_follow or neighbour.density > curr_highest_density:
                 curr_highest_density = sum(neighbour.heatmap)
-                tied_tile_densities = [neighbour]
-            elif neighbour.density == curr_highest_density:
-                tied_tile_densities.append(neighbour)
+                neighbour_to_follow = neighbour
  
-        if not tied_tile_densities:
-            neighbour_to_follow = current_tile
-        else:
-            neighbour_to_follow = tied_tile_densities[np.random.choice(len(tied_tile_densities))]
+        if not neighbour_to_follow and self.best_option:
+            for neighbour in prioritized_neighbours[2:4]:
+                if neighbour and neighbour.density < MAX_DENSITY and not neighbour.obstacle:
+                    neighbour_to_follow = neighbour
+            
         
+        if not neighbour_to_follow:
+            neighbour_to_follow = current_tile
+        
+        # problem not down here
         x = np.random.choice(neighbour_to_follow.width) + neighbour_to_follow.x
         y = np.random.choice(neighbour_to_follow.height) + neighbour_to_follow.y
 
@@ -86,7 +99,7 @@ class BestOption(Behaviour):
         person.x += x_motion
         person.y += y_motion
 
-        if not tied_tile_densities:
+        if neighbour_to_follow == current_tile:
             # undo movement if you colided with another person.
             for other in current_tile.people_in_tile:
                 if other.colliderect(person) and not person.is_me(other):

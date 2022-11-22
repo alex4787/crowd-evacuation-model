@@ -42,7 +42,7 @@ class View():
         screen = pygame.display.set_mode((width, height))
 
         #put in static stuff
-        collections = Collections(width, height)
+        collections = Collections(width, height, agent_count)
         controller = Controller(collections, width, height, stat_board)
         
         # Main game loop.

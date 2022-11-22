@@ -21,7 +21,7 @@ def gen_valid_coordinate(width: int, height: int, obstacles: List[Tile], floor: 
 
 
 class Collections:
-    def __init__(self, width: int, height: int) -> None:
+    def __init__(self, width: int, height: int, player_count: int) -> None:
         self.grid: Grid = Grid()
 
         #populations
@@ -38,7 +38,7 @@ class Collections:
 
         self.maps: Maps = Maps()
 
-        for i in range(250):
+        for i in range(player_count):
             coordinate = gen_valid_coordinate(width, height, self.grid.obstacles, 50)
             person = People(coordinate[0], coordinate[1], self.next_people_id, behaviour=None)
             self.people.append(person)
