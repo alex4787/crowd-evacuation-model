@@ -33,8 +33,8 @@ class MoveToExit(Behaviour):
 
         person.color = (0, 255, 0)
 
-        x_motion = (np.random.choice([unit_vector_x, -unit_vector_x], 1, p=[aptitude, 1-aptitude]))[0]
-        y_motion = (np.random.choice([unit_vector_y, -unit_vector_y], 1, p=[aptitude, 1-aptitude]))[0]
+        x_motion = (np.random.choice([unit_vector_x, -unit_vector_x], 1, p=[1, 0]))[0]
+        y_motion = (np.random.choice([unit_vector_y, -unit_vector_y], 1, p=[1, 0]))[0]
         person.x += x_motion
         person.y += y_motion
         if self.out_of_bounds(person.x, person.y, width, height):
