@@ -25,7 +25,7 @@ MAX_DENSITY = 4
 class BestOption(Behaviour):  
     def __init__(self, best_option):
         self.best_option = best_option
-        return
+        self.neighbour_cur_following = None
 
     def find_compass_from_angle(self, person):
         delta_x = self.best_option.x - person.x
@@ -49,41 +49,56 @@ class BestOption(Behaviour):
         person.x -= x
         person.y -= y
 
-    def go(self, person, exits, fires, aptitude, current_tile, width, height, previous_tile):
-        person.color = (0, 0, 200)
-
+    def choose_neighbour_to_follow(self, person, current_tile, traversed_tiles):
         # find high density neighbour tiles, if tie, draw randomly from tiers
         if self.best_option:
             prioritized_neighbours = self.convert_compass_to_neighbours(person, current_tile) #[Tile?, Tile?, Tile?, Tile?]
             neighbours_to_consider = prioritized_neighbours[0:2]
             random.shuffle(neighbours_to_consider)
+            person.color = (0, 0, 200)
         else:
             neighbours_to_consider = list(current_tile.neighbours.values())
             random.shuffle(neighbours_to_consider)
-        
+            person.color = (255, 100, 255)
+
         neighbour_to_follow = None
         curr_highest_density = 0
 
         for neighbour in neighbours_to_consider:
             if not neighbour:
                 continue
+            heat = sum(neighbour.heatmap)
             if neighbour.density >= MAX_DENSITY:
                 continue
             if neighbour.obstacle:
                 continue
-            if not neighbour_to_follow or neighbour.density > curr_highest_density:
-                curr_highest_density = sum(neighbour.heatmap)
+            if not self.best_option and neighbour in traversed_tiles:
+                continue
+            # if neighbour == previous_tile:
+            #     continue
+            if not neighbour_to_follow or heat > curr_highest_density:
+                curr_highest_density = heat
                 neighbour_to_follow = neighbour
  
         if not neighbour_to_follow and self.best_option:
             for neighbour in prioritized_neighbours[2:4]:
                 if neighbour and neighbour.density < MAX_DENSITY and not neighbour.obstacle:
                     neighbour_to_follow = neighbour
-            
         
         if not neighbour_to_follow:
             neighbour_to_follow = current_tile
-        
+            person.color = (200, 200, 0)
+
+        return neighbour_to_follow
+
+
+    def go(self, person, exits, fires, aptitude, current_tile, width, height, previous_tile, traversed_tiles):
+        if not self.neighbour_cur_following or (self.neighbour_cur_following.density >= MAX_DENSITY or self.neighbour_cur_following == current_tile):
+            neighbour_to_follow = self.choose_neighbour_to_follow(person, current_tile, traversed_tiles)
+            self.neighbour_cur_following = neighbour_to_follow
+        else:
+            neighbour_to_follow = self.neighbour_cur_following
+
         # problem not down here
         x = np.random.choice(neighbour_to_follow.width) + neighbour_to_follow.x
         y = np.random.choice(neighbour_to_follow.height) + neighbour_to_follow.y
@@ -91,8 +106,8 @@ class BestOption(Behaviour):
         hyp = math.hypot(x - person.x, y - person.y)
         if hyp == 0:
             return
-        unit_vector_x = 3*(x - person.x)/(hyp)
-        unit_vector_y = 3*(y - person.y)/(hyp)
+        unit_vector_x = 5*(x - person.x)/(hyp)
+        unit_vector_y = 5*(y - person.y)/(hyp)
 
         x_motion = (np.random.choice([unit_vector_x, -unit_vector_x], 1, p=[1, 0]))[0]
         y_motion = (np.random.choice([unit_vector_y, -unit_vector_y], 1, p=[1, 0]))[0]

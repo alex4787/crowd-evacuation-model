@@ -46,5 +46,6 @@ class Collections:
             tile = self.grid.tiles[person.y//50][person.x//50]
             tile.add_person(person)
             self.maps.person_to_tiles[person] = Tiles(None, tile)
+            self.maps.person_to_tiles[person].traversed_tiles.append(tile)
 
         # self.fires.append(Fire(460, 60))

@@ -17,6 +17,7 @@ class Controller:
             for col in range(20):
                 self.collections.grid.tiles[row][col].update_average_direction()
                 self.collections.grid.tiles[row][col].update_density()
+                self.collections.grid.tiles[row][col].update_heatmap()
 
 
         for person in self.collections.people:
@@ -34,6 +35,7 @@ class Controller:
                 aptitude=0.9,
                 current_tile=self.collections.maps.person_to_tiles[person].current,
                 previous_tile=self.collections.maps.person_to_tiles[person].previous,
+                traversed_tiles=self.collections.maps.person_to_tiles[person].traversed_tiles,
                 width = self.width,
                 height = self.height
             )
@@ -43,10 +45,14 @@ class Controller:
                 previous_tile = self.collections.maps.person_to_tiles[person].current
                 previous_tile.remove_person(person)
                 self.collections.maps.person_to_tiles[person].previous = previous_tile
+
+                # person.traversed_tiles.add(previous_tile)
                 
                 current_tile = self.collections.grid.tiles[person.y//50][person.x//50]
                 current_tile.add_person(person)
                 self.collections.maps.person_to_tiles[person].current = current_tile
+
+                self.collections.maps.person_to_tiles[person].traversed_tiles.append(current_tile)
                 
 
 

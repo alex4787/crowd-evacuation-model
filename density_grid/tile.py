@@ -44,7 +44,7 @@ class Tile(Rect):
     def update_heatmap(self):
         new_heatmap = []
         for heat in self.heatmap:
-            new_heat = heat - 1
+            new_heat = heat - 0.3
             if new_heat > 0:
                 new_heatmap.append(new_heat)
 
@@ -52,7 +52,10 @@ class Tile(Rect):
 
     def add_person(self, person):
         self.people_in_tile.append(person)
-        self.heatmap.append(4)
+        if person.best_option:
+            self.heatmap.append(20)
+        else:
+            self.heatmap.append(100)
 
     def remove_person(self, person):
         self.people_in_tile.remove(person)

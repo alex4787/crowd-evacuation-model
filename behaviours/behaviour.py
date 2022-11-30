@@ -4,7 +4,8 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from game_objects import People, Exit, Fire
     from density_grid import Tile
-from typing import List
+from typing import List, Deque
+from collections import deque
 from abc import ABC, abstractmethod
 
 class Behaviour(ABC):
@@ -19,6 +20,7 @@ class Behaviour(ABC):
         current_tile: Tile,
         exits: List[Exit] = None,
         previous_tile: Tile = None,
+        traversed_tiles: Deque[Tile] = deque(),
         ) -> None:
         pass
 

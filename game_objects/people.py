@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Tuple, List
+from typing import Tuple, List, Set, Deque
 from pygame import Rect
 from behaviours import Behaviour, MoveToExit, DontMove, MoveToDensity, MoveWithCrowd, FollowTheLeader, BestOption
 from game_objects import Exit, Fire
@@ -18,6 +18,7 @@ class People(Rect):
         self.id: int = id
         self._behaviour: Behaviour = behaviour
         self.best_option: Exit = None
+        # self.traversed_tiles: Set = set()
 
     def __hash__(self):
         return self.id
@@ -73,6 +74,7 @@ class People(Rect):
             aptitude: float,
             current_tile: Tile,
             previous_tile: Tile,
+            traversed_tiles: Deque[Tile],
             width: int,
             height: int
             ) -> None:
@@ -124,7 +126,8 @@ class People(Rect):
                 current_tile=current_tile,
                 width=width,
                 height=height,
-                previous_tile=previous_tile
+                previous_tile=previous_tile,
+                traversed_tiles=traversed_tiles,
                 )
         
         #is this the right place to update previous position?
