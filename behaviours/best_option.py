@@ -68,9 +68,11 @@ class BestOption(Behaviour):
             if not neighbour:
                 continue
             heat = sum(neighbour.heatmap)
+            if neighbour.is_danger or neighbour.is_fire:
+                continue
             if neighbour.density >= MAX_DENSITY:
                 continue
-            if neighbour.obstacle:
+            if neighbour.is_obstacle:
                 continue
             if not self.best_option and neighbour in traversed_tiles:
                 continue
@@ -82,7 +84,7 @@ class BestOption(Behaviour):
  
         if not neighbour_to_follow and self.best_option:
             for neighbour in prioritized_neighbours[2:4]:
-                if neighbour and neighbour.density < MAX_DENSITY and not neighbour.obstacle:
+                if neighbour and neighbour.density < MAX_DENSITY and not neighbour.is_obstacle:
                     neighbour_to_follow = neighbour
         
         if not neighbour_to_follow:
@@ -93,7 +95,16 @@ class BestOption(Behaviour):
 
 
     def go(self, person, exits, fires, aptitude, current_tile, width, height, previous_tile, traversed_tiles):
-        if not self.neighbour_cur_following or (self.neighbour_cur_following.density >= MAX_DENSITY or self.neighbour_cur_following == current_tile):
+        if current_tile.is_danger:
+            best_safe_tile = None
+            best_danger_tile = None
+            for tile in current_tile.neighbours.values():
+                if tile.is_danger == False and tile.is_fire == False:
+                    best_safe_tile = tile
+                elif tile.is_danger:
+                    best_danger_tile = tile
+            neighbour_to_follow = best_safe_tile or best_danger_tile or current_tile
+        elif not self.neighbour_cur_following or (self.neighbour_cur_following.density >= MAX_DENSITY or self.neighbour_cur_following == current_tile):
             neighbour_to_follow = self.choose_neighbour_to_follow(person, current_tile, traversed_tiles)
             self.neighbour_cur_following = neighbour_to_follow
         else:

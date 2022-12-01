@@ -1,6 +1,7 @@
 from pygame import Rect
 import numpy as np
 import math
+import pygame.color
 from typing import TYPE_CHECKING, Tuple
 
 if TYPE_CHECKING:
@@ -9,8 +10,10 @@ if TYPE_CHECKING:
 from typing import List
 
 class Tile(Rect):
-    def __init__(self, x: int, y: int, obstacle: bool = False) -> None:
-        self.obstacle: bool = obstacle
+    def __init__(self, x: int, y: int, is_obstacle: bool = False, is_fire: bool = False, is_danger: bool = False) -> None:
+        self.is_obstacle: bool = is_obstacle
+        self.is_fire: bool = is_fire
+        self.is_danger: bool = is_danger
         self.color = (255, 255, 255)
         self.height: int = 50
         self.width: int = 50 
@@ -21,6 +24,10 @@ class Tile(Rect):
         self.average_direction: Tuple[int, int] = (0, 0)
         self.neighbours: dict[str, Tile] = {}
         self.heatmap: List[int] = []
+        self.exit_distance_map: dict[int, int] = {}
+
+    def __hash__(self):
+        return int(f"{self.x}{self.y}")
 
     def update_average_direction(self):
         combined_direction = (0, 0)
@@ -44,7 +51,7 @@ class Tile(Rect):
     def update_heatmap(self):
         new_heatmap = []
         for heat in self.heatmap:
-            new_heat = heat - 0.3
+            new_heat = heat - 5
             if new_heat > 0:
                 new_heatmap.append(new_heat)
 
@@ -53,10 +60,21 @@ class Tile(Rect):
     def add_person(self, person):
         self.people_in_tile.append(person)
         if person.best_option:
-            self.heatmap.append(20)
-        else:
             self.heatmap.append(100)
+        else:
+            self.heatmap.append(20)
 
     def remove_person(self, person):
         self.people_in_tile.remove(person)
+
+    def tileColor(self):
+        if self.is_fire:
+            return pygame.color.Color('darkorange')
+        elif self.is_danger:
+            return pygame.color.Color('orange')
+        elif self.is_obstacle:
+            return pygame.color.Color('purple')
+        else:
+            rgb_value = sum(self.heatmap)
+            return (rgb_value, rgb_value, rgb_value) if rgb_value <= 255 else pygame.color.Color('lightcyan')
 

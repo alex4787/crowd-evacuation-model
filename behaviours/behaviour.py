@@ -13,7 +13,6 @@ class Behaviour(ABC):
     def go(
         self,
         person: People,
-        fires: List[Fire],
         aptitude: int,
         width: int,
         height: int,
