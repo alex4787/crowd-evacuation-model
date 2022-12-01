@@ -22,7 +22,7 @@ class MoveToExit(Behaviour):
         hyp = math.hypot(self.best_option.x - person.x, self.best_option.y - person.y)
         return (self.best_option.centerx, self.best_option.centery, hyp)
 
-    def go(self, person, exits, fires, aptitude, current_tile, width, height):
+    def go(self, person, exits, aptitude, current_tile, width, height):
         x, y, hyp = self.find_best_option_data(person)
 
         if hyp == 0:

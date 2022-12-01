@@ -1,4 +1,4 @@
-from game_objects import People, Exit, Fire
+from game_objects import People, Exit
 from density_grid import Grid, Tile
 from behaviours import MoveToExit
 from density_grid import Maps, Tiles
@@ -31,15 +31,14 @@ class Collections:
         self.exits: List[Exit] = []
         self.next_exit_id: int = 1
 
-        self.fires: List[Fire] = []
-
-        self.exits.append(Exit(0, 0, 1))
+        self.exits.append(Exit(0, 980, 1))
         self.exits.append(Exit(980, 980, 2))
 
         self.maps: Maps = Maps()
 
         for i in range(player_count):
-            coordinate = gen_valid_coordinate(width, height, self.grid.obstacles, 50)
+            # coordinate = gen_valid_coordinate(width, height, self.grid.obstacles, 50)
+            coordinate = gen_valid_coordinate(width, height//3, self.grid.obstacles, 50)
             person = People(coordinate[0], coordinate[1], self.next_people_id, behaviour=None)
             self.people.append(person)
             self.next_people_id+=1
@@ -48,4 +47,4 @@ class Collections:
             self.maps.person_to_tiles[person] = Tiles(None, tile)
             self.maps.person_to_tiles[person].traversed_tiles.append(tile)
 
-        # self.fires.append(Fire(460, 60))
+        

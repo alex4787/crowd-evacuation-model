@@ -18,18 +18,14 @@ class View():
         screen.fill((0, 0, 0))
         for row in collections.grid.tiles:
             for tile in row:
-                rgb_value = sum(tile.heatmap)
-                color = (rgb_value, rgb_value, rgb_value) if rgb_value <= 255 else (255, 0, 0)
-                pygame.draw.rect(screen, color, tile)
-        for obstacle in collections.grid.obstacles:
-            pygame.draw.rect(screen, obstacle.color, obstacle)
-        for fire in collections.fires:
-            pygame.draw.rect(screen, fire.color, fire)
+                pygame.draw.rect(screen, tile.tileColor(), tile)
+                # screen.blit(pygame.font.Font('freesansbold.ttf', 10).render(",".join(map(str, tile.exit_distance_map.values())), True, pygame.color.Color("deeppink")), (tile.x, tile.y))
         for exit in collections.exits:
             pygame.draw.rect(screen, exit.color, exit) 
         for person in collections.people:
             # pygame.draw.rect(screen, person.color, person)
             pygame.draw.rect(screen, person.color, pygame.Rect(person.x, person.y, 20, 20))
+
         
         screen.blit(stats.show(), (stats.x, stats.y))
 
