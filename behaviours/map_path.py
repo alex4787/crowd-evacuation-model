@@ -23,17 +23,21 @@ class MapPath(Behaviour):
         neighbour_to_follow = None
         person.color = (0, 0, 200) if person.exits_in_memory else (255, 100, 255)
 
-        # Find prefered tile based on map paths if possible
-        for neighbour in current_tile.neighbours.values():
-            if neighbour.density >= MAX_DENSITY:
-                continue # although, if fire on our ass
-            for exit_id in person.exits_in_memory.keys():
-                if neighbour_to_follow:
+        # Find prefered tile based on map paths if possible (player must have exits inb memory)
+        if person.exits_in_memory:
+            for neighbour in current_tile.neighbours.values():
+                if neighbour.is_fire:
+                    continue # I think this is happening on spawn and throwing errors.
+                if neighbour.density >= MAX_DENSITY:
+                    continue # although, if fire on our ass
+                if neighbour.is_danger:
+                    continue # we need to allow them to walk on these, but my brain is dying
+                if not neighbour_to_follow:
+                    neighbour_to_follow = neighbour
+                    continue
+                for exit_id in person.exits_in_memory.keys():
                     if neighbour.exit_distance_map[exit_id] < min(neighbour_to_follow.exit_distance_map.values()):
-                        if not neighbour.is_danger:
-                            neighbour_to_follow = neighbour
-                        else:
-                            continue
+                        neighbour_to_follow = neighbour
 
         # If no desirable tiles, 
         cur_highest_heatmap = 0
@@ -52,12 +56,14 @@ class MapPath(Behaviour):
 
         # If still no tiles are desireable, stay put.
         if not neighbour_to_follow:
-            neighbour_to_follow == current_tile
+            neighbour_to_follow = current_tile
             person.color = (200, 200, 0)
 
         return neighbour_to_follow
 
     def go(self, person, exits, aptitude, current_tile, width, height, previous_tile, traversed_tiles):
+        neighbour_to_follow = None
+
         # If in danger, Move away from the fire
         if current_tile.is_danger:
             best_safe_tile = None
@@ -67,7 +73,12 @@ class MapPath(Behaviour):
                     best_safe_tile = tile
                 elif tile.is_danger:
                     best_danger_tile = tile
-            neighbour_to_follow = best_safe_tile or best_danger_tile or current_tile
+            if best_safe_tile:
+                neighbour_to_follow = best_safe_tile
+            elif best_danger_tile:
+                neighbour_to_follow = best_danger_tile
+            else:
+                neighbour_to_follow = current_tile
         
         # IF safe, but not currently headed anywhere, or desired tile not availble, find a new tile to head to
         elif (not self.neighbour_cur_following or self.neighbour_cur_following == current_tile) or (self.neighbour_cur_following.density >= MAX_DENSITY):

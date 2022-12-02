@@ -11,8 +11,8 @@ class People(Rect):
     def __init__(self, x: int, y: int, id: int, behaviour: Behaviour) -> None:
         self.color: Tuple[int, int, int] = (0, 255, 0)
         self.is_dead: bool = False
-        self.height: int = 10
-        self.width: int = 10
+        self.height: int = 20
+        self.width: int = 20
         self.x: int = x
         self.y: int = y
         self.previous_x: int = x 
