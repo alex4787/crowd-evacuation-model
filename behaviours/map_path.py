@@ -23,13 +23,13 @@ class MapPath(Behaviour):
     def choose_neighbour_to_follow(self, person, current_tile, traversed_tiles):
         neighbour_to_follow = None
 
+        neighbours_to_consider = list(current_tile.neighbours.values())
+        neighbours_to_consider = [neighbour for neighbour in neighbours_to_consider if not neighbour.is_fire and not neighbour.is_obstacle]
+        random.shuffle(neighbours_to_consider)
+
         # Find prefered tile based on map paths if possible (player must have exits inb memory)
         if person.exits_in_memory:
-            for neighbour in current_tile.neighbours.values():
-                if neighbour.is_fire:
-                    continue # I think this is happening on spawn and throwing errors.
-                if neighbour.is_obstacle:
-                    continue
+            for neighbour in neighbours_to_consider:
                 if neighbour.density >= MAX_DENSITY:
                     continue # although, if fire on our ass
                 if neighbour.is_danger:
@@ -40,22 +40,34 @@ class MapPath(Behaviour):
                     neighbour_to_follow = neighbour
                     person.color = (pygame.color.Color("blue"))
                     continue
-                for exit_id in person.exits_in_memory.keys():
-                    if neighbour.exit_distance_map[exit_id] != None:
-                        if neighbour.exit_distance_map[exit_id] < min(x for x in neighbour_to_follow.exit_distance_map.values() if x != None):
-                            neighbour_to_follow = neighbour
-                            person.color = (pygame.color.Color("blue"))
+
+                neighbour_min_distance = min([v for k, v in neighbour.exit_distance_map.items() if k in person.exits_in_memory.keys() and v != None], default=0)
+                neighbour_to_follow_min_distance = min([v for k, v in neighbour_to_follow.exit_distance_map.items() if k in person.exits_in_memory.keys() and v != None], default=0)
+                if neighbour_min_distance < neighbour_to_follow_min_distance:
+                    neighbour_to_follow = neighbour
+                    person.color = (pygame.color.Color("blue"))
+
+                # for exit_id in person.exits_in_memory.keys():
+                #     if neighbour.exit_distance_map[exit_id] != None:
+                #         if neighbour.exit_distance_map[exit_id] < min(x for x in neighbour_to_follow.exit_distance_map.values() if x != None):
+                #             neighbour_to_follow = neighbour
+                #             person.color = (pygame.color.Color("lightblue"))
 
         # If no desirable tiles, 
-        cur_highest_heatmap = 0
+        cur_highest_heatmap = -1
+        
         if not neighbour_to_follow:
-            for neighbour in current_tile.neighbours.values():
+            # if all neighbours are traversed, then ignore the traversed check
+            all_neighbours_traversed = all(n in traversed_tiles or n.is_danger or n.density >= MAX_DENSITY for n in neighbours_to_consider)
+            for neighbour in neighbours_to_consider:
+                # consider own as an option? because they're forced to move the other way if 
+                # never do opposite of heatmap, do next best
                 heat = sum(neighbour.heatmap)
-                if neighbour.is_danger or neighbour.is_fire:
+                if neighbour.is_danger:
                     continue
                 if neighbour.density >= MAX_DENSITY:
                     continue
-                if neighbour.is_obstacle:
+                if not all_neighbours_traversed and neighbour in traversed_tiles:
                     continue
                 if heat > cur_highest_heatmap:
                     cur_highest_heatmap = heat
