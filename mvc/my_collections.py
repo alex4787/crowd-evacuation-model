@@ -26,10 +26,9 @@ class Collections:
             self.next_people_id+=1
             tile = self.grid.tiles[person.y//floor][person.x//floor]
             tile.add_person(person)
-
-            # ARE THESE EVEN USED ANYMORE ?
-            self.maps.person_to_tiles[person] = Tiles(None, tile) ##### IS THIS NEEDED?
-            self.maps.person_to_tiles[person].traversed_tiles.append(tile) ##### IS THIS NEEDED?
+            self.maps.person_to_tiles[person] = Tiles(None, tile)
+            
+            #self.maps.person_to_tiles[person].traversed_tiles.append(tile) ##### IS THIS NEEDED?
 
 
     def gen_valid_coordinate(self, width: int, height: int, obstacles: List[Tile], fires: List[Tile], floor: int):
