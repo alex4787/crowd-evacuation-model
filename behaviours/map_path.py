@@ -8,6 +8,7 @@ import numpy as np
 import math
 from math import pi
 import random
+import pygame
 
 MAX_DENSITY = 4
 
@@ -21,43 +22,68 @@ class MapPath(Behaviour):
 
     def choose_neighbour_to_follow(self, person, current_tile, traversed_tiles):
         neighbour_to_follow = None
-        person.color = (0, 0, 200) if person.exits_in_memory else (255, 100, 255)
 
-        # Find prefered tile based on map paths if possible
-        for neighbour in current_tile.neighbours.values():
-            if neighbour.density >= MAX_DENSITY:
-                continue # although, if fire on our ass
-            for exit_id in person.exits_in_memory.keys():
-                if neighbour_to_follow:
-                    if neighbour.exit_distance_map[exit_id] < min(neighbour_to_follow.exit_distance_map.values()):
-                        if not neighbour.is_danger:
-                            neighbour_to_follow = neighbour
-                        else:
-                            continue
+        neighbours_to_consider = list(current_tile.neighbours.values())
+        neighbours_to_consider = [neighbour for neighbour in neighbours_to_consider if not neighbour.is_fire and not neighbour.is_obstacle]
+        random.shuffle(neighbours_to_consider)
+
+        # Find prefered tile based on map paths if possible (player must have exits inb memory)
+        if person.exits_in_memory:
+            for neighbour in neighbours_to_consider:
+                if neighbour.density >= MAX_DENSITY:
+                    continue # although, if fire on our ass
+                if neighbour.is_danger:
+                    continue # we need to allow them to walk on these, but my brain is dying
+                if all(x == None for x in neighbour.exit_distance_map.values()):
+                    continue
+                if not neighbour_to_follow:
+                    neighbour_to_follow = neighbour
+                    person.color = (pygame.color.Color("blue"))
+                    continue
+
+                neighbour_min_distance = min([v for k, v in neighbour.exit_distance_map.items() if k in person.exits_in_memory.keys() and v != None], default=0)
+                neighbour_to_follow_min_distance = min([v for k, v in neighbour_to_follow.exit_distance_map.items() if k in person.exits_in_memory.keys() and v != None], default=0)
+                if neighbour_min_distance < neighbour_to_follow_min_distance:
+                    neighbour_to_follow = neighbour
+                    person.color = (pygame.color.Color("blue"))
+
+                # for exit_id in person.exits_in_memory.keys():
+                #     if neighbour.exit_distance_map[exit_id] != None:
+                #         if neighbour.exit_distance_map[exit_id] < min(x for x in neighbour_to_follow.exit_distance_map.values() if x != None):
+                #             neighbour_to_follow = neighbour
+                #             person.color = (pygame.color.Color("lightblue"))
 
         # If no desirable tiles, 
-        cur_highest_heatmap = 0
+        cur_highest_heatmap = -1
+        
         if not neighbour_to_follow:
-            for neighbour in current_tile.neighbours.values():
+            # if all neighbours are traversed, then ignore the traversed check
+            all_neighbours_traversed = all(n in traversed_tiles or n.is_danger or n.density >= MAX_DENSITY for n in neighbours_to_consider)
+            for neighbour in neighbours_to_consider:
+                # consider own as an option? because they're forced to move the other way if 
+                # never do opposite of heatmap, do next best
                 heat = sum(neighbour.heatmap)
-                if neighbour.is_danger or neighbour.is_fire:
+                if neighbour.is_danger:
                     continue
                 if neighbour.density >= MAX_DENSITY:
                     continue
-                if neighbour.is_obstacle:
+                if not all_neighbours_traversed and neighbour in traversed_tiles:
                     continue
                 if heat > cur_highest_heatmap:
                     cur_highest_heatmap = heat
+                    person.color = (pygame.color.Color("pink"))
                     neighbour_to_follow = neighbour
 
         # If still no tiles are desireable, stay put.
         if not neighbour_to_follow:
-            neighbour_to_follow == current_tile
-            person.color = (200, 200, 0)
+            neighbour_to_follow = current_tile
+            person.color = (pygame.color.Color("yellow"))
 
         return neighbour_to_follow
 
     def go(self, person, exits, aptitude, current_tile, width, height, previous_tile, traversed_tiles):
+        neighbour_to_follow = None
+
         # If in danger, Move away from the fire
         if current_tile.is_danger:
             best_safe_tile = None
@@ -67,10 +93,26 @@ class MapPath(Behaviour):
                     best_safe_tile = tile
                 elif tile.is_danger:
                     best_danger_tile = tile
+
             neighbour_to_follow = best_safe_tile or best_danger_tile or current_tile
         
-        # IF safe, but not currently headed anywhere, or desired tile not availble, find a new tile to head to
-        elif (not self.neighbour_cur_following or self.neighbour_cur_following == current_tile) or (self.neighbour_cur_following.density >= MAX_DENSITY):
+        # If not in danger, but not currentyl following anyone, pick a new tile
+        elif not self.neighbour_cur_following:
+            neighbour_to_follow = self.choose_neighbour_to_follow(person, current_tile, traversed_tiles)
+            self.neighbour_cur_following = neighbour_to_follow
+
+        # If you are in the tile you were trying to get to, pick a new tile
+        elif self.neighbour_cur_following == current_tile:
+            neighbour_to_follow = self.choose_neighbour_to_follow(person, current_tile, traversed_tiles)
+            self.neighbour_cur_following = neighbour_to_follow
+
+        # If the target tile becomes to dense, pick a new one
+        elif self.neighbour_cur_following.density >= MAX_DENSITY:
+            neighbour_to_follow = self.choose_neighbour_to_follow(person, current_tile, traversed_tiles)
+            self.neighbour_cur_following = neighbour_to_follow
+
+        # if the previous target is now fire or danger, select a new one.
+        elif self.neighbour_cur_following.is_danger or self.neighbour_cur_following.is_fire:
             neighbour_to_follow = self.choose_neighbour_to_follow(person, current_tile, traversed_tiles)
             self.neighbour_cur_following = neighbour_to_follow
 

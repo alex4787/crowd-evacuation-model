@@ -11,8 +11,8 @@ class People(Rect):
     def __init__(self, x: int, y: int, id: int, behaviour: Behaviour) -> None:
         self.color: Tuple[int, int, int] = (0, 255, 0)
         self.is_dead: bool = False
-        self.height: int = 10
-        self.width: int = 10
+        self.height: int = 15
+        self.width: int = 15
         self.x: int = x
         self.y: int = y
         self.previous_x: int = x 
@@ -90,14 +90,17 @@ class People(Rect):
         temp_y = self.y
 
         #this is the movement based on path length, consider deleting logic after this
-        availible_exits = self.exits_in_sight(people, exits=exits, obstacles=obstacles, fires=fires) # do we want to be blocked by fire?
+        availible_exits = self.exits_in_sight(people, exits=exits, obstacles=obstacles, fires=fires)
         for exit in availible_exits:
-            self.exits_in_memory[exit.id] = 100 # tninker with this value
+            self.exits_in_memory[exit.id] = 20 # tninker with this value
+        exit_ids_to_delete = []
         for exit_id, counter in self.exits_in_memory.items():
             if counter == 0:
-                del(self.exits_in_memory[exit_id])
+                exit_ids_to_delete.append(exit_id)
             else:
-                counter-=1
+                self.exits_in_memory[exit_id]-=1
+        for id in exit_ids_to_delete:
+            del(self.exits_in_memory[id])
 
         # Update best option
         availible_exits = self.exits_in_sight(people, exits=exits, obstacles=obstacles, fires=fires)

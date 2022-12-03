@@ -93,6 +93,9 @@ class Controller:
                 self.collections.maps.person_to_tiles[person].current = current_tile
 
                 self.collections.maps.person_to_tiles[person].traversed_tiles.append(current_tile)
+
+
+
                 
 
 
