@@ -65,13 +65,13 @@ class Controller:
                 if person.colliderect(exit):
                     self.stats.escape_count += 1
                     self.stats.remaining_count -= 1
+                    self.collections.maps.person_to_tiles[person].current.remove_person(person)
                     self.collections.people.remove(person)
             
             person.move(
                 self.collections.people,
                 self.collections.exits,
-                obstacles = self.collections.grid.obstacles,
-                fires = self.collections.grid.fires,
+                tiles = self.collections.grid.tiles,
                 aptitude=0.9,
                 current_tile=self.collections.maps.person_to_tiles[person].current,
                 previous_tile=self.collections.maps.person_to_tiles[person].previous,

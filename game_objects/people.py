@@ -7,6 +7,8 @@ from game_objects import Exit
 from density_grid import Tile, Grid
 import math
 
+MAX_DENSITY=4
+
 class People(Rect):
     def __init__(self, x: int, y: int, id: int, behaviour: Behaviour) -> None:
         self.color: Tuple[int, int, int] = (0, 255, 0)
@@ -51,23 +53,32 @@ class People(Rect):
             return False
         return True
 
-    def is_valid_line_of_sight(self, line: Tuple[Tuple[int, int], Tuple[int, int]], people: List[People], obstacles: List[Tile], fires :List[Tile]) -> bool:
+    def is_valid_line_of_sight(self, line: Tuple[Tuple[int, int], Tuple[int, int]], people: List[People], tiles: List[List[Tile]]) -> bool:
         for other in people: 
             if not self.is_me(other) and self.is_other_in_the_way(other, line):
                 return False
-        for obstacle in obstacles:
-            if self.is_other_in_the_way(obstacle, line):
-                return False
-        for fire in fires:
-            if self.is_other_in_the_way(fire, line):
-                return False
+        
+        for row in tiles:
+            for tile in row:
+                if tile.is_fire or tile.is_obstacle or tile.density > MAX_DENSITY:
+                    if self.is_other_in_the_way(tile, line):
+                        return False
         return True
+        
+    
+        # for obstacle in obstacles:
+        #     if self.is_other_in_the_way(obstacle, line):
+        #         return False
+        # for fire in fires:
+        #     if self.is_other_in_the_way(fire, line):
+        #         return False
+        # return True
 
-    def exits_in_sight(self, people: List[People], exits: List[Exit], obstacles: List[Tile], fires: List[Tile]) -> List[Exit]:
+    def exits_in_sight(self, people: List[People], exits: List[Exit], tiles: List[List[Tile]]) -> List[Exit]:
         exits_in_sight = []
         for exit in exits:
             line = ((self.centerx, self.centery), (exit.centerx, exit.centery))
-            if self.is_valid_line_of_sight(line, people, obstacles, fires):
+            if self.is_valid_line_of_sight(line, people, tiles):
                 exits_in_sight.append(exit)  
         return exits_in_sight
 
@@ -75,8 +86,7 @@ class People(Rect):
             self,
             people: List[People],
             exits: List[Exit],
-            obstacles: List[Tile],
-            fires: List[Tile],
+            tiles: List[List[Tile]],
             aptitude: float,
             current_tile: Tile,
             previous_tile: Tile,
@@ -90,7 +100,7 @@ class People(Rect):
         temp_y = self.y
 
         #this is the movement based on path length, consider deleting logic after this
-        availible_exits = self.exits_in_sight(people, exits=exits, obstacles=obstacles, fires=fires)
+        availible_exits = self.exits_in_sight(people, exits=exits, tiles=tiles)
         for exit in availible_exits:
             self.exits_in_memory[exit.id] = 20 # tninker with this value
         exit_ids_to_delete = []
@@ -103,7 +113,7 @@ class People(Rect):
             del(self.exits_in_memory[id])
 
         # Update best option
-        availible_exits = self.exits_in_sight(people, exits=exits, obstacles=obstacles, fires=fires)
+        availible_exits = self.exits_in_sight(people, exits=exits, tiles=tiles)
         if not self.best_option and availible_exits:
             self.best_option = availible_exits[0]
 

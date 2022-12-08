@@ -75,6 +75,6 @@ class Tile(Rect):
         elif self.is_obstacle:
             return pygame.color.Color('purple')
         else:
-            rgb_value = sum(self.heatmap)
+            rgb_value = self.density*255/4
             return (rgb_value, rgb_value, rgb_value) if rgb_value <= 255 else pygame.color.Color('lightcyan')
 

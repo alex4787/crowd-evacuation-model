@@ -1,11 +1,12 @@
 from mvc import View
 
 #Game variables
-agent_count = 10
+agent_count = 200
 floor = 50
 
 #test params
-test = 'capacity'
+#test = 'capacity'
+test = None
 count = 10
 
 view = View()
