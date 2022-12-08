@@ -1,5 +1,5 @@
 from behaviours import Behaviour
-from game_objects import Exit
+from density_grid.exit import Exit
 from typing import List, Tuple
 import numpy as np
 import math

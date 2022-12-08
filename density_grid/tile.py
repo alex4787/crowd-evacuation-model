@@ -1,8 +1,11 @@
 from pygame import Rect
 import numpy as np
 import math
+import random
 import pygame.color
 from typing import TYPE_CHECKING, Tuple
+
+from config import MAX_DENSITY
 
 if TYPE_CHECKING:
     from game_objects import People
@@ -45,27 +48,39 @@ class Tile(Rect):
         self.average_direction = (unit_vector_x, unit_vector_y)
         return
 
-    def update_density(self):
-        self.density = len(self.people_in_tile)
+    # def update_density(self):
+    #     self.density = len(self.people_in_tile)
 
     def update_heatmap(self):
         new_heatmap = []
         for heat in self.heatmap:
-            new_heat = heat - 5
+            new_heat = heat - 1
             if new_heat > 0:
                 new_heatmap.append(new_heat)
 
         self.heatmap = new_heatmap
 
+    def murder_if_too_dense(self):
+        density_difference = self.density - MAX_DENSITY
+        if density_difference > 0:
+            prob_murder = density_difference * 0.1
+            if (random.random() < prob_murder):
+                victim = random.choice(self.people_in_tile)
+                victim.color = (255, 0, 0)
+                victim.is_dead = True
+
+
     def add_person(self, person):
         self.people_in_tile.append(person)
+        self.density += 1
         if person.best_option:
-            self.heatmap.append(100)
+            self.heatmap.append(50)
         else:
-            self.heatmap.append(20)
+            self.heatmap.append(0)
 
     def remove_person(self, person):
         self.people_in_tile.remove(person)
+        self.density -= 1
 
     def tileColor(self):
         if self.is_fire:
@@ -75,6 +90,9 @@ class Tile(Rect):
         elif self.is_obstacle:
             return pygame.color.Color('purple')
         else:
-            rgb_value = self.density*255/4
+            # if you wanan see density
+            #rgb_value = self.density*255/4
+            #if you wanna see heat map
+            rgb_value = sum(self.heatmap)
             return (rgb_value, rgb_value, rgb_value) if rgb_value <= 255 else pygame.color.Color('lightcyan')
 

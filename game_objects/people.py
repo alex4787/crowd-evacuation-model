@@ -3,14 +3,14 @@ from typing import Tuple, List, Set, Deque, Dict
 from pygame import Rect
 from behaviours import Behaviour, MoveToExit, DontMove, MoveToDensity, MoveWithCrowd, FollowTheLeader, BestOption
 from behaviours.map_path import MapPath
-from game_objects import Exit
+from density_grid.exit import Exit
 from density_grid import Tile, Grid
 import math
 
 from config import *
 
 class People(Rect):
-    def __init__(self, x: int, y: int, id: int, behaviour: Behaviour) -> None:
+    def __init__(self, x: int, y: int, id: int, behaviour: Behaviour, speed: int) -> None:
         self.color: Tuple[int, int, int] = (0, 255, 0)
         self.is_dead: bool = False
         self.height: int = 15
@@ -24,6 +24,8 @@ class People(Rect):
         self.best_option: Exit = None
         # self.traversed_tiles: Set = set()
         self.exits_in_memory: Dict[int, int] = dict()
+        self.panic = 0
+        self.speed = speed
 
     def __hash__(self):
         return self.id
@@ -60,9 +62,12 @@ class People(Rect):
         
         for row in tiles:
             for tile in row:
-                if tile.is_fire or tile.is_obstacle or tile.density > MAX_DENSITY:
+                if tile.is_fire or tile.is_obstacle:
                     if self.is_other_in_the_way(tile, line):
                         return False
+                # if tile.density >= MAX_DENSITY:
+                #     if tile.clipline(line):
+                #         return False
         return True
         
     
@@ -86,7 +91,7 @@ class People(Rect):
             self,
             people: List[People],
             exits: List[Exit],
-            tiles: List[List[Tile]],
+            grid: Grid,
             aptitude: float,
             current_tile: Tile,
             previous_tile: Tile,
@@ -95,14 +100,16 @@ class People(Rect):
             height: int
             ) -> None:
 
+        self.panic = len(grid.fires) / (len(grid.tiles) * len(grid.tiles[0]))
+
         # temp vals for current position
         temp_x = self.x
         temp_y = self.y
 
         #this is the movement based on path length, consider deleting logic after this
-        availible_exits = self.exits_in_sight(people, exits=exits, tiles=tiles)
+        availible_exits = self.exits_in_sight(people, exits=exits, tiles=grid.tiles)
         for exit in availible_exits:
-            self.exits_in_memory[exit.id] = 20 # tninker with this value
+            self.exits_in_memory[exit.id] = 500 # tninker with this value
         exit_ids_to_delete = []
         for exit_id, counter in self.exits_in_memory.items():
             if counter == 0:
@@ -113,7 +120,7 @@ class People(Rect):
             del(self.exits_in_memory[id])
 
         # Update best option
-        availible_exits = self.exits_in_sight(people, exits=exits, tiles=tiles)
+        availible_exits = self.exits_in_sight(people, exits=exits, tiles=grid.tiles)
         if not self.best_option and availible_exits:
             self.best_option = availible_exits[0]
 
@@ -125,20 +132,20 @@ class People(Rect):
                 best_option_distance = exit_distance
 
         # execute behaviour
-        if self.best_option in availible_exits:
-            if not isinstance(self._behaviour, MoveToExit):
-                self._behaviour = MoveToExit(best_option=self.best_option)
-            else:
-                self._behaviour.best_option = self.best_option
+        # if self.best_option in availible_exits:
+        #     if not isinstance(self._behaviour, MoveToExit):
+        #         self._behaviour = MoveToExit(best_option=self.best_option)
+        #     else:
+        #         self._behaviour.best_option = self.best_option
 
-            self._behaviour.go(
-                exits=availible_exits,
-                aptitude=aptitude,
-                person=self,
-                current_tile=None,
-                width=width,
-                height=height
-                )
+        #     self._behaviour.go(
+        #         exits=availible_exits,
+        #         aptitude=aptitude,
+        #         person=self,
+        #         current_tile=None,
+        #         width=width,
+        #         height=height
+        #         )
 
         # else:
         #     if not isinstance(self._behaviour, BestOption):
@@ -156,20 +163,20 @@ class People(Rect):
         #         previous_tile=previous_tile,
         #         traversed_tiles=traversed_tiles,
         #         )
-        else:
-            if not isinstance(self._behaviour, MapPath):
-                self._behaviour = MapPath()
+    # else:
+        if not isinstance(self._behaviour, MapPath):
+            self._behaviour = MapPath()
 
-            self._behaviour.go(
-                exits=availible_exits,
-                aptitude=aptitude,
-                person=self,
-                current_tile=current_tile,
-                width=width,
-                height=height,
-                previous_tile=previous_tile,
-                traversed_tiles=traversed_tiles,
-                )
+        self._behaviour.go(
+            exits=availible_exits,
+            aptitude=aptitude,
+            person=self,
+            current_tile=current_tile,
+            width=width,
+            height=height,
+            previous_tile=previous_tile,
+            traversed_tiles=traversed_tiles,
+            )
         
         #is this the right place to update previous position?
         self.previous_x = temp_x

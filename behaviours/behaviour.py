@@ -2,8 +2,8 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from game_objects import People, Exit, Fire
-    from density_grid import Tile
+    from game_objects import People
+    from density_grid import Tile, Exit
 from typing import List, Deque
 from collections import deque
 from abc import ABC, abstractmethod

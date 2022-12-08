@@ -19,7 +19,7 @@ class View():
             for tile in row:
                 pygame.draw.rect(screen, tile.tileColor(), tile)
                 #screen.blit(pygame.font.Font('freesansbold.ttf', 16).render(",".join(map(str, tile.exit_distance_map.values())), True, pygame.color.Color("deeppink")), (tile.x, tile.y))
-        for exit in collections.exits:
+        for exit in collections.grid.exits:
             pygame.draw.rect(screen, exit.color, exit) 
         for person in collections.people:
             pygame.draw.rect(screen, person.color, person)
@@ -44,7 +44,7 @@ class View():
         if test:
             if test == 'capacity':
                 ticks_so_far = 0
-                exit_count = len(collections.exits)
+                exit_count = len(collections.grid.exits)
                 player_count = len(collections.people)
 
 

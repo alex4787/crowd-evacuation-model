@@ -1,7 +1,7 @@
 from mvc import View
 
 #Game variables
-agent_count = 200
+agent_count = 500
 floor = 50
 
 #test params
