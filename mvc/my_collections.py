@@ -16,8 +16,10 @@ class Collections:
         self.next_people_id: int = 1
         self.next_exit_id: int = 1
 
-        self.exits.append(Exit(0, 980, 1))
-        self.exits.append(Exit(980, 980, 2))
+        # self.exits.append(Exit(100, 450, 1))
+        # self.exits.append(Exit(980, 0, 2))
+        self.exits.append(Exit(280, 980, 1))
+        self.exits.append(Exit(680, 980, 1))
 
         for _ in range(player_count):
             x, y = self.gen_valid_coordinate(width, height//3, self.grid.obstacles, self.grid.fires, floor)

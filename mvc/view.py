@@ -18,7 +18,7 @@ class View():
         for row in collections.grid.tiles:
             for tile in row:
                 pygame.draw.rect(screen, tile.tileColor(), tile)
-                # screen.blit(pygame.font.Font('freesansbold.ttf', 16).render(",".join(map(str, tile.exit_distance_map.values())), True, pygame.color.Color("deeppink")), (tile.x, tile.y))
+                #screen.blit(pygame.font.Font('freesansbold.ttf', 16).render(",".join(map(str, tile.exit_distance_map.values())), True, pygame.color.Color("deeppink")), (tile.x, tile.y))
         for exit in collections.exits:
             pygame.draw.rect(screen, exit.color, exit) 
         for person in collections.people:
@@ -28,7 +28,7 @@ class View():
         pygame.display.flip()
 
     
-    def runPyGame(self, agent_count: int, floor: int) -> None:
+    def runPyGame(self, agent_count: int, floor: int, test: str = None) -> None:
         pygame.init()
 
         fps = 60.0
@@ -40,10 +40,32 @@ class View():
         stat_board = StatBoard(agent_count)
         collections = Collections(width, height, floor, agent_count)
         controller = Controller(collections, width, height, stat_board)
+
+        if test:
+            if test == 'capacity':
+                ticks_so_far = 0
+                exit_count = len(collections.exits)
+                player_count = len(collections.people)
+
+
         
         dt = 1/fps
-        while True:
+        while stat_board.remaining_count > 0: ## just to trigger tests
             self.update_events(dt)
             self.draw(screen, collections, stat_board)
             controller.update()   
             dt = fpsClock.tick(fps)
+
+            if test:
+                if test == 'capacity':
+                    ticks_so_far+=1
+
+
+
+        if test:
+            if test == 'capacity':
+                f = open("data/capacity-real.txt", 'a')
+                f.write(f'{exit_count} {player_count} {ticks_so_far}\n')
+                f.close()
+
+
