@@ -1,0 +1,1 @@
+MAX_DENSITY = 4

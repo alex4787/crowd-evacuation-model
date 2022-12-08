@@ -10,7 +10,7 @@ from math import pi
 import random
 import pygame
 
-MAX_DENSITY = 4
+from config import *
 
 class MapPath(Behaviour):  
     def __init__(self):
@@ -89,6 +89,8 @@ class MapPath(Behaviour):
             best_safe_tile = None
             best_danger_tile = None
             for tile in current_tile.neighbours.values():
+                if tile.is_obstacle:
+                    continue
                 if not tile.is_danger and not tile.is_fire:
                     best_safe_tile = tile
                 elif tile.is_danger:

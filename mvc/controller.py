@@ -34,6 +34,17 @@ class Controller:
             # get current tile of exit
             # iterate and set tiles' mappings values
 
+    def check_has_exited(self, person):
+        for exit in self.collections.exits:
+            if person.colliderect(exit):
+                self.stats.escape_count += 1
+                self.stats.remaining_count -= 1
+                self.collections.maps.person_to_tiles[person].current.remove_person(person)
+                self.collections.people.remove(person)
+                return True
+        
+        return False
+
 
     def update(self):
         if self.tick == 0:
@@ -61,13 +72,10 @@ class Controller:
                 self.stats.death_count += 1
                 self.stats.remaining_count -= 1
                 continue
-            for exit in self.collections.exits:
-                if person.colliderect(exit):
-                    self.stats.escape_count += 1
-                    self.stats.remaining_count -= 1
-                    self.collections.maps.person_to_tiles[person].current.remove_person(person)
-                    self.collections.people.remove(person)
             
+            if self.check_has_exited(person):
+                continue
+
             person.move(
                 self.collections.people,
                 self.collections.exits,

@@ -7,7 +7,7 @@ from game_objects import Exit
 from density_grid import Tile, Grid
 import math
 
-MAX_DENSITY=4
+from config import *
 
 class People(Rect):
     def __init__(self, x: int, y: int, id: int, behaviour: Behaviour) -> None:
