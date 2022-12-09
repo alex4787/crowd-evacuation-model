@@ -40,10 +40,12 @@ def spawn_pattern(shape):
 
 
 # Constants #####################################################
-MAX_DENSITY = 4
+
+MAX_DENSITY = 5
 FIRE_SPREAD_RATE = 0.01
-AGENT_COUNT = 500
-AGENT_SPEED = 5
+AGENT_COUNT = 400
+AGENT_SPEED = 6
+TIME_ON_EXIT = 10
 SPAWN_DIMENSIONS = spawn_pattern("Random")
 
 BLACK = (0, 0, 0)
