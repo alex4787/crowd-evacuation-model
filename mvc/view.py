@@ -6,6 +6,8 @@ from pygame.locals import *
 from mvc import Collections, Controller
 from statboard import StatBoard
 
+from config import *
+
 class View():
     def update_events(self, dt):
         for event in pygame.event.get():
@@ -14,7 +16,7 @@ class View():
                 sys.exit()
         
     def draw(self, screen: pygame.Surface, collections: Collections, stats: StatBoard):
-        screen.fill((0, 0, 0))
+        screen.fill(BLACK)
         for row in collections.grid.tiles:
             for tile in row:
                 pygame.draw.rect(screen, tile.tileColor(), tile)
@@ -28,7 +30,7 @@ class View():
         pygame.display.flip()
 
     
-    def runPyGame(self, agent_count: int, floor: int, test: str = None) -> None:
+    def runPyGame(self, test: str = None) -> None:
         pygame.init()
 
         fps = 60.0
@@ -37,30 +39,22 @@ class View():
 
         screen = pygame.display.set_mode((width, height))
 
-        stat_board = StatBoard(agent_count)
-        collections = Collections(width, height, floor, agent_count)
+        stat_board = StatBoard(AGENT_COUNT)
+        collections = Collections()
         controller = Controller(collections, width, height, stat_board)
 
-        if test:
-            if test == 'capacity':
-                ticks_so_far = 0
-                exit_count = len(collections.grid.exits)
-                player_count = len(collections.people)
+        #Params for Tesing
+        ticks_so_far = 0
+        exit_count = len(collections.grid.exits)
+        player_count = len(collections.people)
 
-
-        
         dt = 1/fps
         while stat_board.remaining_count > 0: ## just to trigger tests
             self.update_events(dt)
             self.draw(screen, collections, stat_board)
             controller.update()   
             dt = fpsClock.tick(fps)
-
-            if test:
-                if test == 'capacity':
-                    ticks_so_far+=1
-
-
+            ticks_so_far+=1
 
         if test:
             if test == 'capacity':

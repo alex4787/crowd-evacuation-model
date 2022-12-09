@@ -1,16 +1,13 @@
 from pygame import Rect
 import numpy as np
-import math
 import random
 import pygame.color
 from typing import TYPE_CHECKING, Tuple
-
-from config import MAX_DENSITY
+from typing import List
+from config import *
 
 if TYPE_CHECKING:
     from game_objects import People
-
-from typing import List
 
 class Tile(Rect):
     def __init__(self, x: int, y: int, is_obstacle: bool = False, is_fire: bool = False, is_danger: bool = False) -> None:
@@ -18,38 +15,18 @@ class Tile(Rect):
         self.is_fire: bool = is_fire
         self.is_danger: bool = is_danger
         self.color = (255, 255, 255)
-        self.height: int = 50
-        self.width: int = 50 
+        self.height: int = FLOOR
+        self.width: int = FLOOR 
         self.x: int = x
         self.y: int = y
         self.people_in_tile: List[People] = []
         self.density: int = len(self.people_in_tile)
-        self.average_direction: Tuple[int, int] = (0, 0)
         self.neighbours: dict[str, Tile] = {}
         self.heatmap: List[int] = []
         self.exit_distance_map: dict[int, int] = {}
 
     def __hash__(self):
         return int(f"{self.x}{self.y}")
-
-    def update_average_direction(self):
-        combined_direction = (0, 0)
-        for person in self.people_in_tile:
-            curr_direction = (person.x - person.previous_x, person.y - person.previous_y)
-            combined_direction = tuple(map(lambda i, j: i + j, combined_direction, curr_direction))
-        
-        x = combined_direction[0]
-        y = combined_direction[1]
-        hyp = math.hypot(x, y)
-        if hyp < 1:
-            hyp = 1 # This is just a hack, what does it mean if hyp = 0  and how should we handle /0 ?
-        unit_vector_x = 3*(x)/(hyp)
-        unit_vector_y = 3*(y)/(hyp)
-        self.average_direction = (unit_vector_x, unit_vector_y)
-        return
-
-    # def update_density(self):
-    #     self.density = len(self.people_in_tile)
 
     def update_heatmap(self):
         new_heatmap = []
@@ -66,7 +43,7 @@ class Tile(Rect):
             prob_murder = density_difference * 0.1
             if (random.random() < prob_murder):
                 victim = random.choice(self.people_in_tile)
-                victim.color = (255, 0, 0)
+                victim.color = RED
                 victim.is_dead = True
 
 
@@ -74,9 +51,9 @@ class Tile(Rect):
         self.people_in_tile.append(person)
         self.density += 1
         if person.best_option:
-            self.heatmap.append(50)
+            self.heatmap.append(BLUE_MAN_HEAT_DROP)
         else:
-            self.heatmap.append(0)
+            self.heatmap.append(PINK_MAN_HEAT_DROP)
 
     def remove_person(self, person):
         self.people_in_tile.remove(person)
@@ -90,9 +67,7 @@ class Tile(Rect):
         elif self.is_obstacle:
             return pygame.color.Color('purple')
         else:
-            # if you wanan see density
-            #rgb_value = self.density*255/4
-            #if you wanna see heat map
-            rgb_value = sum(self.heatmap)
+            #rgb_value = self.density*255/4     # if you wanan see density
+            rgb_value = sum(self.heatmap)       #if you wanna see heat map
             return (rgb_value, rgb_value, rgb_value) if rgb_value <= 255 else pygame.color.Color('lightcyan')
 

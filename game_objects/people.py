@@ -1,8 +1,7 @@
 from __future__ import annotations
 from typing import Tuple, List, Set, Deque, Dict
 from pygame import Rect
-from behaviours import Behaviour, MoveToExit, DontMove, MoveToDensity, MoveWithCrowd, FollowTheLeader, BestOption
-from behaviours.map_path import MapPath
+from behaviours import Behaviour, MapPath
 from density_grid.exit import Exit
 from density_grid import Tile, Grid
 import math
@@ -22,7 +21,6 @@ class People(Rect):
         self.id: int = id
         self._behaviour: Behaviour = behaviour
         self.best_option: Exit = None
-        # self.traversed_tiles: Set = set()
         self.exits_in_memory: Dict[int, int] = dict()
         self.panic = 0
         self.speed = speed
@@ -39,7 +37,7 @@ class People(Rect):
         self._behaviour = behaviour
 
     def tile_has_changed(self) -> bool:
-        return self.x//50 != self.previous_x//50 or self.y//50 != self.previous_y//50
+        return self.x//FLOOR != self.previous_x//FLOOR or self.y//FLOOR != self.previous_y//FLOOR
 
     def is_me(self: People, other: People) -> bool:
         if self.id == other.id:
@@ -65,19 +63,7 @@ class People(Rect):
                 if tile.is_fire or tile.is_obstacle:
                     if self.is_other_in_the_way(tile, line):
                         return False
-                # if tile.density >= MAX_DENSITY:
-                #     if tile.clipline(line):
-                #         return False
         return True
-        
-    
-        # for obstacle in obstacles:
-        #     if self.is_other_in_the_way(obstacle, line):
-        #         return False
-        # for fire in fires:
-        #     if self.is_other_in_the_way(fire, line):
-        #         return False
-        # return True
 
     def exits_in_sight(self, people: List[People], exits: List[Exit], tiles: List[List[Tile]]) -> List[Exit]:
         exits_in_sight = []
@@ -102,11 +88,9 @@ class People(Rect):
 
         self.panic = len(grid.fires) / (len(grid.tiles) * len(grid.tiles[0]))
 
-        # temp vals for current position
         temp_x = self.x
         temp_y = self.y
 
-        #this is the movement based on path length, consider deleting logic after this
         availible_exits = self.exits_in_sight(people, exits=exits, tiles=grid.tiles)
         for exit in availible_exits:
             self.exits_in_memory[exit.id] = 500 # tninker with this value
@@ -130,40 +114,7 @@ class People(Rect):
             if exit_distance < best_option_distance:
                 self.best_option = exit
                 best_option_distance = exit_distance
-
-        # execute behaviour
-        # if self.best_option in availible_exits:
-        #     if not isinstance(self._behaviour, MoveToExit):
-        #         self._behaviour = MoveToExit(best_option=self.best_option)
-        #     else:
-        #         self._behaviour.best_option = self.best_option
-
-        #     self._behaviour.go(
-        #         exits=availible_exits,
-        #         aptitude=aptitude,
-        #         person=self,
-        #         current_tile=None,
-        #         width=width,
-        #         height=height
-        #         )
-
-        # else:
-        #     if not isinstance(self._behaviour, BestOption):
-        #         self._behaviour = BestOption(best_option=self.best_option)
-        #     else:
-        #         self._behaviour.best_option = self.best_option
-
-        #     self._behaviour.go(
-        #         exits=availible_exits,
-        #         aptitude=aptitude,
-        #         person=self,
-        #         current_tile=current_tile,
-        #         width=width,
-        #         height=height,
-        #         previous_tile=previous_tile,
-        #         traversed_tiles=traversed_tiles,
-        #         )
-    # else:
+ 
         if not isinstance(self._behaviour, MapPath):
             self._behaviour = MapPath()
 
@@ -178,6 +129,5 @@ class People(Rect):
             traversed_tiles=traversed_tiles,
             )
         
-        #is this the right place to update previous position?
         self.previous_x = temp_x
         self.previous_y = temp_y
