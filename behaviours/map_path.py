@@ -10,7 +10,7 @@ from math import pi
 import random
 import pygame
 
-MAX_DENSITY = 4
+from config import *
 
 class MapPath(Behaviour):  
     def __init__(self):
@@ -30,7 +30,7 @@ class MapPath(Behaviour):
         # Find prefered tile based on map paths if possible (player must have exits inb memory)
         if person.exits_in_memory:
             for neighbour in neighbours_to_consider:
-                if neighbour.density >= MAX_DENSITY:
+                if not self.should_ignore_density and neighbour.density >= MAX_DENSITY:
                     continue # although, if fire on our ass
                 if neighbour.is_danger:
                     continue # we need to allow them to walk on these, but my brain is dying
@@ -58,14 +58,14 @@ class MapPath(Behaviour):
         
         if not neighbour_to_follow:
             # if all neighbours are traversed, then ignore the traversed check
-            all_neighbours_traversed = all(n in traversed_tiles or n.is_danger or n.density >= MAX_DENSITY for n in neighbours_to_consider)
+            all_neighbours_traversed = all(n in traversed_tiles or n.is_danger or (not self.should_ignore_density and n.density >= MAX_DENSITY) for n in neighbours_to_consider)
             for neighbour in neighbours_to_consider:
                 # consider own as an option? because they're forced to move the other way if 
                 # never do opposite of heatmap, do next best
                 heat = sum(neighbour.heatmap)
                 if neighbour.is_danger:
                     continue
-                if neighbour.density >= MAX_DENSITY:
+                if not self.should_ignore_density and neighbour.density >= MAX_DENSITY:
                     continue
                 if not all_neighbours_traversed and neighbour in traversed_tiles:
                     continue
@@ -84,11 +84,15 @@ class MapPath(Behaviour):
     def go(self, person, exits, aptitude, current_tile, width, height, previous_tile, traversed_tiles):
         neighbour_to_follow = None
 
+        self.should_ignore_density = random.random()**2 < person.panic
+
         # If in danger, Move away from the fire
         if current_tile.is_danger:
             best_safe_tile = None
             best_danger_tile = None
             for tile in current_tile.neighbours.values():
+                if tile.is_obstacle:
+                    continue
                 if not tile.is_danger and not tile.is_fire:
                     best_safe_tile = tile
                 elif tile.is_danger:
@@ -107,7 +111,7 @@ class MapPath(Behaviour):
             self.neighbour_cur_following = neighbour_to_follow
 
         # If the target tile becomes to dense, pick a new one
-        elif self.neighbour_cur_following.density >= MAX_DENSITY:
+        elif not self.should_ignore_density and self.neighbour_cur_following.density >= MAX_DENSITY:
             neighbour_to_follow = self.choose_neighbour_to_follow(person, current_tile, traversed_tiles)
             self.neighbour_cur_following = neighbour_to_follow
 
@@ -126,8 +130,8 @@ class MapPath(Behaviour):
         hyp = math.hypot(x - person.x, y - person.y)
         if hyp == 0:
             return
-        unit_vector_x = 5*(x - person.x)/(hyp)
-        unit_vector_y = 5*(y - person.y)/(hyp)
+        unit_vector_x = person.speed*(x - person.x)/(hyp)
+        unit_vector_y = person.speed*(y - person.y)/(hyp)
         person.x += unit_vector_x
         person.y += unit_vector_y
 

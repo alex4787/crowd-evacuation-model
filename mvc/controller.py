@@ -11,7 +11,7 @@ class Controller:
         self.tick: int = 0
 
     def update_exit_distance_maps(self):
-        for exit in self.collections.exits:
+        for exit in self.collections.grid.exits:
             for row in self.collections.grid.tiles:
                 for tile in row:
                     tile.exit_distance_map[exit.id] = None
@@ -34,6 +34,17 @@ class Controller:
             # get current tile of exit
             # iterate and set tiles' mappings values
 
+    def check_has_exited(self, person):
+        for exit in self.collections.grid.exits:
+            if person.colliderect(exit):
+                self.stats.escape_count += 1
+                self.stats.remaining_count -= 1
+                self.collections.maps.person_to_tiles[person].current.remove_person(person)
+                self.collections.people.remove(person)
+                return True
+        
+        return False
+
 
     def update(self):
         if self.tick == 0:
@@ -47,8 +58,9 @@ class Controller:
         for row in range(20):
             for col in range(20):
                 self.collections.grid.tiles[row][col].update_average_direction()
-                self.collections.grid.tiles[row][col].update_density()
+                # self.collections.grid.tiles[row][col].update_density()
                 self.collections.grid.tiles[row][col].update_heatmap()
+                self.collections.grid.tiles[row][col].murder_if_too_dense()
 
 
         for person in self.collections.people:
@@ -61,17 +73,14 @@ class Controller:
                 self.stats.death_count += 1
                 self.stats.remaining_count -= 1
                 continue
-            for exit in self.collections.exits:
-                if person.colliderect(exit):
-                    self.stats.escape_count += 1
-                    self.stats.remaining_count -= 1
-                    self.collections.people.remove(person)
             
+            if self.check_has_exited(person):
+                continue
+
             person.move(
                 self.collections.people,
-                self.collections.exits,
-                obstacles = self.collections.grid.obstacles,
-                fires = self.collections.grid.fires,
+                self.collections.grid.exits,
+                grid=self.collections.grid,
                 aptitude=0.9,
                 current_tile=self.collections.maps.person_to_tiles[person].current,
                 previous_tile=self.collections.maps.person_to_tiles[person].previous,

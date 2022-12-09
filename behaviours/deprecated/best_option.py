@@ -20,7 +20,7 @@ davinci_wheel = [
     (pi, ['W', 'N', 'S', 'E']),
 ]
 
-MAX_DENSITY = 4
+from config import *
 
 class BestOption(Behaviour):  
     def __init__(self, best_option):

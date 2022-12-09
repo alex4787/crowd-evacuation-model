@@ -1,4 +1,4 @@
-from game_objects import People, Exit
+from game_objects.people import People
 from density_grid import Grid, Tile
 from behaviours import MoveToExit
 from density_grid import Maps, Tiles
@@ -10,18 +10,19 @@ class Collections:
     def __init__(self, width: int, height: int, floor: int, player_count: int) -> None:
         self.grid: Grid = Grid()
         self.people: List[People] = []
-        self.exits: List[Exit] = []
         self.maps: Maps = Maps()
         
         self.next_people_id: int = 1
         self.next_exit_id: int = 1
 
-        self.exits.append(Exit(0, 980, 1))
-        self.exits.append(Exit(980, 980, 2))
+        # self.exits.append(Exit(100, 450, 1))
+        # self.exits.append(Exit(980, 0, 2))
+        # self.exits.append(Exit(0, 980, 1))
+        #self.exits.append(Exit(680, 980, 1))
 
         for _ in range(player_count):
-            x, y = self.gen_valid_coordinate(width, height//3, self.grid.obstacles, self.grid.fires, floor)
-            person = People(x, y, self.next_people_id, behaviour=None)
+            x, y = self.gen_valid_coordinate(width, height, self.grid.obstacles, self.grid.fires, floor)
+            person = People(x, y, self.next_people_id, behaviour=None, speed=5)
             self.people.append(person)
             self.next_people_id+=1
             tile = self.grid.tiles[person.y//floor][person.x//floor]

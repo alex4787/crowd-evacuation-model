@@ -1,8 +1,8 @@
 # from .avoid_fire import AvoidFire
 from behaviours.behaviour import Behaviour
-from behaviours.dont_move import DontMove
-from behaviours.move_to_density import MoveToDensity
+from behaviours.deprecated.dont_move import DontMove
+from behaviours.deprecated.move_to_density import MoveToDensity
 from behaviours.move_to_exit import MoveToExit
-from behaviours.move_with_crowd import MoveWithCrowd
-from behaviours.follow_the_leader import FollowTheLeader
-from behaviours.best_option import BestOption
+from behaviours.deprecated.move_with_crowd import MoveWithCrowd
+from behaviours.deprecated.follow_the_leader import FollowTheLeader
+from behaviours.deprecated.best_option import BestOption

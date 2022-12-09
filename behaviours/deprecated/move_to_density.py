@@ -2,7 +2,7 @@ from behaviours import Behaviour
 import numpy as np
 import math
 
-MAX_DENSITY = 5
+from config import *
 
 class MoveToDensity(Behaviour):  
     def __init__(self):
