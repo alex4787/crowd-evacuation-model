@@ -11,6 +11,7 @@ from config import *
 class People(Rect):
     def __init__(self, x: int, y: int, id: int, behaviour: Behaviour, speed: int) -> None:
         self.color: Tuple[int, int, int] = (0, 255, 0)
+        self.time_on_exit = TIME_ON_EXIT
         self.is_dead: bool = False
         self.height: int = 15
         self.width: int = 15

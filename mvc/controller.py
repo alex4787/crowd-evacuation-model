@@ -36,12 +36,16 @@ class Controller:
 
     def check_has_exited(self, person):
         for exit in self.collections.grid.exits:
-            if person.colliderect(exit):
-                self.stats.escape_count += 1
-                self.stats.remaining_count -= 1
-                self.collections.maps.person_to_tiles[person].current.remove_person(person)
-                self.collections.people.remove(person)
-                return True
+            if person in exit.people_in_tile:
+                if person.time_on_exit <= 0:
+                    self.stats.escape_count += 1
+                    self.stats.remaining_count -= 1
+                    self.collections.maps.person_to_tiles[person].current.remove_person(person)
+                    self.collections.people.remove(person)
+                    return True
+                else:
+                    person.time_on_exit -= 1
+                    return True
         return False
 
 
