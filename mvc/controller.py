@@ -38,7 +38,10 @@ class Controller:
         for exit in self.collections.grid.exits:
             if person in exit.people_in_tile:
                 if person.time_on_exit <= 0:
-                    self.stats.escape_count += 1
+                    if person.speed == AGENT_SPEED_1:
+                        self.stats.escape_count_t1 += 1
+                    else:
+                        self.stats.escape_count_t2 += 1
                     self.stats.remaining_count -= 1
                     self.collections.maps.person_to_tiles[person].current.remove_person(person)
                     self.collections.people.remove(person)
@@ -60,7 +63,13 @@ class Controller:
         for row in range(20):
             for col in range(20):
                 self.collections.grid.tiles[row][col].update_heatmap()
-                self.collections.grid.tiles[row][col].murder_if_too_dense()
+                victim = self.collections.grid.tiles[row][col].murder_if_too_dense()
+                if victim:
+                    if victim.speed == AGENT_SPEED_1:
+                        self.stats.crush_count_t1 += 1
+                    else: 
+                        self.stats.crush_count_t2 += 1
+                    self.stats.remaining_count -= 1
 
         for person in self.collections.people:
             if person.is_dead:
@@ -68,7 +77,10 @@ class Controller:
             if self.collections.maps.person_to_tiles[person].current.is_fire:
                 person.color = BLACK
                 person.is_dead = True
-                self.stats.death_count += 1
+                if person.speed == AGENT_SPEED_1:
+                    self.stats.burn_count_t1 += 1
+                else:
+                    self.stats.burn_count_t2 += 1
                 self.stats.remaining_count -= 1
                 continue
             if self.check_has_exited(person):

@@ -40,11 +40,14 @@ class Tile(Rect):
     def murder_if_too_dense(self):
         density_difference = self.density - MAX_DENSITY
         if density_difference > 0:
-            prob_murder = density_difference * 0.1
+            prob_murder = density_difference * MURDER_MODIFIER
             if (random.random() < prob_murder):
-                victim = random.choice(self.people_in_tile)
-                victim.color = RED
-                victim.is_dead = True
+                living_people_in_tile = [person for person in self.people_in_tile if not person.is_dead]
+                if living_people_in_tile:
+                    victim = random.choice(living_people_in_tile)
+                    victim.color = RED
+                    victim.is_dead = True
+                    return victim
 
 
     def add_person(self, person):
