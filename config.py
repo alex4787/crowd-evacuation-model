@@ -43,10 +43,14 @@ def spawn_pattern(shape):
 
 MAX_DENSITY = 5
 FIRE_SPREAD_RATE = 0.01
-AGENT_COUNT = 400
-AGENT_SPEED = 6
+AGENT_COUNT = 300
+AGENT_SPEED_1 = 3
+AGENT_SPEED_2 = 6
+AGENT_SPEED_1_PROPORTIONS = [0, .1, .2, .3, .4, .5, .6, .7, .8, .9, 1]
 TIME_ON_EXIT = 10
 SPAWN_DIMENSIONS = spawn_pattern("Random")
+
+MURDER_MODIFIER = 0.05
 
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
@@ -55,8 +59,9 @@ FLOOR = 50
 BLUE_MAN_HEAT_DROP = 50
 PINK_MAN_HEAT_DROP = 0
 
-TEST_ITERATIONS = 10
-TEST_TYPE = None #'capacity'
+TEST_ITERATIONS = 5
+TEST_PROPORTION = 0
+TEST_TYPE = None #'proportion' #None #'capacity'
 
 
 TILE_OBSTACLES = obstacle_pattern(None)
