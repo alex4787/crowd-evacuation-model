@@ -66,6 +66,10 @@ class View():
                 f = open("data/speed-proportion-real.txt", 'a')
                 f.write(f'{AGENT_SPEED_1} {AGENT_SPEED_2} {prop} {AGENT_COUNT} {stat_board.crush_count_t1} {stat_board.burn_count_t1} {stat_board.escape_count_t1} {stat_board.crush_count_t2} {stat_board.burn_count_t2} {stat_board.escape_count_t2}\n')
                 f.close()
+            if test == 'prop-2exit':
+                f = open("data/speed-prop-2exit-real.txt", 'a')
+                f.write(f'{AGENT_SPEED_1} {AGENT_SPEED_2} {prop} {AGENT_COUNT} {stat_board.crush_count_t1} {stat_board.burn_count_t1} {stat_board.escape_count_t1} {stat_board.crush_count_t2} {stat_board.burn_count_t2} {stat_board.escape_count_t2}\n')
+                f.close()
 
 
 
