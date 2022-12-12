@@ -70,22 +70,22 @@ def graph_prop_speed():
     y_total_burn_prop = df['total_burn_prop']
     y_total_crush_prop = df['total_crush_prop']
 
-    plt.plot(x_pop_percent_slow, y_slow_escape_prop, 'g:', label='Slow Pop Escaped')
+    plt.plot(x_pop_percent_slow, y_slow_escape_prop, 'g', label='Slow Pop Escaped')
     # plt.plot(x_pop_percent_slow, y_slow_burn_prop, 'g--', label='Slow Pop Burned')
     # plt.plot(x_pop_percent_slow, y_slow_crush_prop, 'g', label='Slow Pop Crushed')
-    plt.plot(x_pop_percent_slow, y_fast_escape_prop, 'r:', label='Fast Pop Escaped')
+    plt.plot(x_pop_percent_slow, y_fast_escape_prop, 'r', label='Fast Pop Escaped')
     # plt.plot(x_pop_percent_slow, y_fast_burn_prop, 'r--', label='Fast Pop Burned')
     # plt.plot(x_pop_percent_slow, y_fast_crush_prop, 'r', label='Fast Pop Crushed')
-    plt.plot(x_pop_percent_slow, y_total_escape_prop, 'b:', label='Total Pop Escaped')
+    plt.plot(x_pop_percent_slow, y_total_escape_prop, 'b', label='Total Pop Escaped')
     # plt.plot(x_pop_percent_slow, y_total_burn_prop, 'b--', label='Total Pop Burned')
     # plt.plot(x_pop_percent_slow, y_total_crush_prop, 'b', label='Total Pop Crushed')
 
     plt.ylim([0, 1])
     plt.xlim([0, 1])
 
-    plt.xlabel('Slow Proportion of Pop', fontsize = 12)
-    plt.ylabel('SubPop Event Proportion', fontsize = 12)
-    plt.title('Proportion of Crush, Burn, and Escape rates by Agent Population Type', fontsize = 20)
+    plt.xlabel('Slow Proportion of Population', fontsize = 12)
+    plt.ylabel('Escape Proportion', fontsize = 12)
+    plt.title('Escape Rate by Agent Speed', fontsize = 20)
     plt.legend()
     plt.show()
 

@@ -28,6 +28,8 @@ def fire_pattern(shape):
 def exit_pattern(shape):
     if shape == "BottomMiddle":
         return [(19, 10)]
+    if shape == "2atBottom":
+        return [(19, 5), (19, 15)]
 
 def spawn_pattern(shape):
     if shape == "Random":
@@ -60,10 +62,9 @@ BLUE_MAN_HEAT_DROP = 50
 PINK_MAN_HEAT_DROP = 0
 
 TEST_ITERATIONS = 5
-TEST_PROPORTION = 0
-TEST_TYPE = None #'proportion' #None #'capacity'
+TEST_TYPE = 'prop-2exit' #None #'proportion' #None #'capacity'
 
 
 TILE_OBSTACLES = obstacle_pattern(None)
-TILE_EXITS = exit_pattern("BottomMiddle")
+TILE_EXITS = exit_pattern("2atBottom")
 TILE_FIRES = fire_pattern("Top3")
