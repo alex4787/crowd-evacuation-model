@@ -102,5 +102,9 @@ class View():
                 f = open("data/4choke-nochoke-dist-real.txt", 'a')
                 f.write(f'{AGENT_SPEED_1} {AGENT_SPEED_2} {prop} {AGENT_COUNT} {stat_board.crush_count_t1} {stat_board.burn_count_t1} {stat_board.escape_count_t1} {stat_board.crush_count_t2} {stat_board.burn_count_t2} {stat_board.escape_count_t2}\n')
                 f.close()
+            if test == 'fire3_4skinnychoke_randomdist_2door':
+                f = open("data/fire3_4skinnychoke_randomdist_2door.txt", 'a')
+                f.write(f'{AGENT_SPEED_1} {AGENT_SPEED_2} {prop} {AGENT_COUNT} {stat_board.crush_count_t1} {stat_board.burn_count_t1} {stat_board.escape_count_t1} {stat_board.crush_count_t2} {stat_board.burn_count_t2} {stat_board.escape_count_t2}\n')
+                f.close()
 
 
