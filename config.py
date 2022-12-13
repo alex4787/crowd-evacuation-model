@@ -4,7 +4,7 @@ def obstacle_pattern(shape):
     if shape == "U":
         return [(10, 11), (10, 14), (10,10), (11,10), (12,10), (13,10), (14, 10), (15, 10), (10, 15), (11, 15), (12, 15), (13, 15), (14, 15), (15, 15), (15, 11), (15, 12), (15, 13), (15, 14)]
     if shape == "Square":
-        return [(x,y) for x in range(1,5) for y in range(1,5)]
+        return [(x+12,y+8) for x in range(1,6) for y in range(1,4)]
     if shape == "Bucket":
         return [
     (10, 0), (10, 1), (10, 2), (10, 3), (10, 4), (10, 5), (10, 6), (10, 7),
@@ -62,9 +62,9 @@ BLUE_MAN_HEAT_DROP = 50
 PINK_MAN_HEAT_DROP = 0
 
 TEST_ITERATIONS = 5
-TEST_TYPE = 'prop-2exit' #None #'proportion' #None #'capacity'
+TEST_TYPE = 'door-block' #None #'door' #None#'middlefire' #None #'prop-2exit' #None #'proportion' #None #'capacity'
 
 
-TILE_OBSTACLES = obstacle_pattern(None)
-TILE_EXITS = exit_pattern("2atBottom")
+TILE_OBSTACLES = obstacle_pattern('Square')
+TILE_EXITS = exit_pattern("BottomMiddle")
 TILE_FIRES = fire_pattern("Top3")

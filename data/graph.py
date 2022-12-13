@@ -32,9 +32,9 @@ def graph_capacity():
     plt.show()
 
 
-def graph_prop_speed():
+def graph_prop_speed(file):
     col_names = ["speed_1", "speed_2", "prop", "total_count", "t1_crush", "t1_burn", "t1_out", "t2_crush", "t2_burn", "t2_out"]
-    df = pd.read_csv("speed-proportion-real.txt", sep=" ", names=col_names)
+    df = pd.read_csv(file, sep=" ", names=col_names)
 
     df['speed_1_count'] = df['total_count'] * df['prop']
     df['speed_2_count'] = df['total_count'] * (1-df['prop'])
@@ -70,15 +70,15 @@ def graph_prop_speed():
     y_total_burn_prop = df['total_burn_prop']
     y_total_crush_prop = df['total_crush_prop']
 
-    plt.plot(x_pop_percent_slow, y_slow_escape_prop, 'g', label='Slow Pop Escaped')
-    # plt.plot(x_pop_percent_slow, y_slow_burn_prop, 'g--', label='Slow Pop Burned')
-    # plt.plot(x_pop_percent_slow, y_slow_crush_prop, 'g', label='Slow Pop Crushed')
-    plt.plot(x_pop_percent_slow, y_fast_escape_prop, 'r', label='Fast Pop Escaped')
-    # plt.plot(x_pop_percent_slow, y_fast_burn_prop, 'r--', label='Fast Pop Burned')
-    # plt.plot(x_pop_percent_slow, y_fast_crush_prop, 'r', label='Fast Pop Crushed')
+    plt.plot(x_pop_percent_slow, y_slow_escape_prop, 'r', label='Slow Pop Escaped')
+    plt.plot(x_pop_percent_slow, y_slow_burn_prop, 'r--', label='Slow Pop Burned')
+    plt.plot(x_pop_percent_slow, y_slow_crush_prop, 'r:', label='Slow Pop Crushed')
+    plt.plot(x_pop_percent_slow, y_fast_escape_prop, 'g', label='Fast Pop Escaped')
+    plt.plot(x_pop_percent_slow, y_fast_burn_prop, 'g--', label='Fast Pop Burned')
+    plt.plot(x_pop_percent_slow, y_fast_crush_prop, 'g:', label='Fast Pop Crushed')
     plt.plot(x_pop_percent_slow, y_total_escape_prop, 'b', label='Total Pop Escaped')
-    # plt.plot(x_pop_percent_slow, y_total_burn_prop, 'b--', label='Total Pop Burned')
-    # plt.plot(x_pop_percent_slow, y_total_crush_prop, 'b', label='Total Pop Crushed')
+    plt.plot(x_pop_percent_slow, y_total_burn_prop, 'b--', label='Total Pop Burned')
+    plt.plot(x_pop_percent_slow, y_total_crush_prop, 'b:', label='Total Pop Crushed')
 
     plt.ylim([0, 1])
     plt.xlim([0, 1])
@@ -89,4 +89,11 @@ def graph_prop_speed():
     plt.legend()
     plt.show()
 
-graph_prop_speed()
+
+
+basic = "speed-proportion-real.txt"
+twoExits = "speed-prop-2exit-real.txt"
+middleFire = "middlefire-real.txt"
+door = "door-real.txt"
+block_devider = "door-block-real.txt"
+graph_prop_speed(block_devider)
