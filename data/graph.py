@@ -100,4 +100,5 @@ doors_4 = "4Doors-real.txt"
 choke_4 = '4choke-real.txt'
 choke_4_nochoke = '4choke-nochoke-real.txt'
 choke_3_fat = '3choke-fat.txt'
-graph_prop_speed(choke_3_fat)
+choke_4_nochoke_dist = '4choke-nochoke-dist-real.txt'
+graph_prop_speed(choke_4_nochoke)
