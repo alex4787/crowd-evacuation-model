@@ -63,13 +63,6 @@ class Controller:
         for row in range(20):
             for col in range(20):
                 self.collections.grid.tiles[row][col].update_heatmap()
-                victim = self.collections.grid.tiles[row][col].murder_if_too_dense()
-                if victim:
-                    if victim.speed == AGENT_SPEED_1:
-                        self.stats.crush_count_t1 += 1
-                    else: 
-                        self.stats.crush_count_t2 += 1
-                    self.stats.remaining_count -= 1
 
         for person in self.collections.people:
             if person.is_dead:
@@ -106,6 +99,14 @@ class Controller:
                 current_tile.add_person(person)
                 self.collections.maps.person_to_tiles[person].current = current_tile
                 self.collections.maps.person_to_tiles[person].traversed_tiles.append(current_tile)
+
+                victim = current_tile.murder_if_too_dense()
+                if victim:
+                    if victim.speed == AGENT_SPEED_1:
+                        self.stats.crush_count_t1 += 1
+                    else: 
+                        self.stats.crush_count_t2 += 1
+                    self.stats.remaining_count -= 1
 
 
 

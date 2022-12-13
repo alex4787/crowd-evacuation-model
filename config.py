@@ -20,6 +20,8 @@ def obstacle_pattern(shape):
         return [(19, i) for i in range(20) if i not in [5, 14]]
     if shape == '2DoorsEarlyChoke':
         return [(19, i) for i in range(20) if i not in [5, 14]] + [(10, i) for i in range(20) if i not in [3, 7, 12, 16]]
+    if shape == '2DoorsEarlyChokeFat':
+        return [(19, i) for i in range(20) if i not in [5, 14]] + [(10, i) for i in range(20) if i not in [4, 3, 9, 10, 16, 15]]
 
 def fire_pattern(shape):
     if shape == None:
@@ -53,16 +55,18 @@ def spawn_pattern(shape):
 
 # Constants #####################################################
 
+PANIC = 0.3
+
 MAX_DENSITY = 5
-FIRE_SPREAD_RATE = 0.01
+FIRE_SPREAD_RATE = 0.007
 AGENT_COUNT = 300
 AGENT_SPEED_1 = 3
 AGENT_SPEED_2 = 6
 AGENT_SPEED_1_PROPORTIONS = [0, .2, .4, .6, .8, 1]
 TIME_ON_EXIT = 10
-SPAWN_DIMENSIONS = spawn_pattern("TopThird")
+SPAWN_DIMENSIONS = spawn_pattern("Random")
 
-MURDER_MODIFIER = 0.05
+MURDER_MODIFIER = 0.2
 
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
@@ -72,7 +76,7 @@ BLUE_MAN_HEAT_DROP = 50
 PINK_MAN_HEAT_DROP = 0
 
 TEST_ITERATIONS = 8
-TEST_TYPE = '4chokenochoke' #'4choke' #None #'4doors' #None #'door-block' #None #'door' #None#'middlefire' #None #'prop-2exit' #None #'proportion' #None #'capacity'
+TEST_TYPE = None #'3chokefat' #'4chokenochoke' #'4choke' #None #'4doors' #None #'door-block' #None #'door' #None#'middlefire' #None #'prop-2exit' #None #'proportion' #None #'capacity'
 
 
 TILE_OBSTACLES = obstacle_pattern('2Doors')
