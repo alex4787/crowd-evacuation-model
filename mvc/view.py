@@ -30,7 +30,7 @@ class View():
         pygame.display.flip()
 
     
-    def runPyGame(self, test: str = None, prop: float = 0.5) -> None:
+    def runPyGame(self, test: str = None, prop: float = 0.0) -> None:
         pygame.init()
 
         fps = 60.0
@@ -92,6 +92,10 @@ class View():
                 f.close()
             if test == '4chokenochoke':
                 f = open("data/4choke-nochoke-real.txt", 'a')
+                f.write(f'{AGENT_SPEED_1} {AGENT_SPEED_2} {prop} {AGENT_COUNT} {stat_board.crush_count_t1} {stat_board.burn_count_t1} {stat_board.escape_count_t1} {stat_board.crush_count_t2} {stat_board.burn_count_t2} {stat_board.escape_count_t2}\n')
+                f.close()
+            if test == '3chokefat':
+                f = open("data/3choke-fat.txt", 'a')
                 f.write(f'{AGENT_SPEED_1} {AGENT_SPEED_2} {prop} {AGENT_COUNT} {stat_board.crush_count_t1} {stat_board.burn_count_t1} {stat_board.escape_count_t1} {stat_board.crush_count_t2} {stat_board.burn_count_t2} {stat_board.escape_count_t2}\n')
                 f.close()
             if test == '4chokenochokedist':

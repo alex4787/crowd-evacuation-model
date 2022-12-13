@@ -84,7 +84,8 @@ class MapPath(Behaviour):
     def go(self, person, exits, aptitude, current_tile, width, height, previous_tile, traversed_tiles):
         neighbour_to_follow = None
 
-        self.should_ignore_density = random.random()**2 < person.panic
+        # self.should_ignore_density = math.sqrt(random.random()) < person.panic
+        self.should_ignore_density = random.random() < PANIC
 
         # If in danger, Move away from the fire
         if current_tile.is_danger:
