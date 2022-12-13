@@ -96,4 +96,7 @@ twoExits = "speed-prop-2exit-real.txt"
 middleFire = "middlefire-real.txt"
 door = "door-real.txt"
 block_devider = "door-block-real.txt"
-graph_prop_speed(block_devider)
+doors_4 = "4Doors-real.txt"
+choke_4 = '4choke-real.txt'
+choke_4_nochoke = '4choke-nochoke-real.txt'
+graph_prop_speed(choke_4_nochoke)
