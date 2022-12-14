@@ -104,4 +104,5 @@ choke_4_nochoke_dist = '4choke-nochoke-dist-real.txt'
 
 #Tests since Panic was altered
 fire3_4skinnychoke_randomdist_2door = "fire3_4skinnychoke_randomdist_2door.txt"
-graph_prop_speed(fire3_4skinnychoke_randomdist_2door)
+fire3_nochoke_randomdist_2door = 'fire3-nochoke-randomdist-2door.txt'
+graph_prop_speed(fire3_nochoke_randomdist_2door)
