@@ -101,4 +101,7 @@ choke_4 = '4choke-real.txt'
 choke_4_nochoke = '4choke-nochoke-real.txt'
 choke_3_fat = '3choke-fat.txt'
 choke_4_nochoke_dist = '4choke-nochoke-dist-real.txt'
-graph_prop_speed(choke_4_nochoke)
+
+# after panic altered
+fire3_nochoke_randomdist_2door = 'fire3-nochoke-randomdist-2door.txt'
+graph_prop_speed(fire3_nochoke_randomdist_2door)
