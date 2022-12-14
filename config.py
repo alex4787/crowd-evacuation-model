@@ -76,10 +76,9 @@ BLUE_MAN_HEAT_DROP = 50
 PINK_MAN_HEAT_DROP = 0
 
 TEST_ITERATIONS = 8
-# TEST_TYPE = '4chokenochokedist' # '3chokefat' #'4chokenochoke' #'4choke' #None #'4doors' #None #'door-block' #None #'door' #None#'middlefire' #None #'prop-2exit' #None #'proportion' #None #'capacity'
-TEST_TYPE = 'fire3_nochoke_randomdist_2door'
+TEST_TYPE = 'fire3_nochoke_randomdist_2door' #'fire3_4skinnychoke_randomdist_2door' #'4choke' #'4chokenochokedist' # '3chokefat' #'4chokenochoke' #'4choke' #None #'4doors' #None #'door-block' #None #'door' #None#'middlefire' #None #'prop-2exit' #None #'proportion' #None #'capacity'
 
 
-TILE_OBSTACLES = obstacle_pattern('2Doors')
+TILE_OBSTACLES = obstacle_pattern('2DoorsEarlyChoke')
 TILE_EXITS = exit_pattern("2Doors")
 TILE_FIRES = fire_pattern("Top3")

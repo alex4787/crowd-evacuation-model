@@ -102,6 +102,7 @@ choke_4_nochoke = '4choke-nochoke-real.txt'
 choke_3_fat = '3choke-fat.txt'
 choke_4_nochoke_dist = '4choke-nochoke-dist-real.txt'
 
-# after panic altered
+#Tests since Panic was altered
+fire3_4skinnychoke_randomdist_2door = "fire3_4skinnychoke_randomdist_2door.txt"
 fire3_nochoke_randomdist_2door = 'fire3-nochoke-randomdist-2door.txt'
 graph_prop_speed(fire3_nochoke_randomdist_2door)
