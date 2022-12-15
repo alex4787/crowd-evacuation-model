@@ -78,6 +78,7 @@ PINK_MAN_HEAT_DROP = 0
 TEST_ITERATIONS = 8
 TEST_TYPE = None #'fire3_randomdist_1door' #'4choke' #'4chokenochokedist' # '3chokefat' #'4chokenochoke' #'4choke' #None #'4doors' #None #'door-block' #None #'door' #None#'middlefire' #None #'prop-2exit' #None #'proportion' #None #'capacity'
 
+
 SPAWN_DIMENSIONS = spawn_pattern("Random")
 TILE_OBSTACLES = obstacle_pattern('Door')
 TILE_EXITS = exit_pattern("BottomMiddle")
