@@ -13,7 +13,7 @@ def obstacle_pattern(shape):
     (10,10), (11,10), (12,10), (13,10), (14, 10), (15, 10),
     ]
     if shape == "Door":
-        return [(19, 9), (19, 11)]
+        return [(19, i) for i in range(20) if i not in [10]]
     if shape == '4Doors':
         return [(19, 2), (19, 4), (19, 6), (19, 8), (19, 11), (19, 13), (19, 15), (19, 17)]
     if shape == '2Doors':
@@ -64,7 +64,7 @@ AGENT_SPEED_1 = 3
 AGENT_SPEED_2 = 6
 AGENT_SPEED_1_PROPORTIONS = [0, .2, .4, .6, .8, 1]
 TIME_ON_EXIT = 10
-SPAWN_DIMENSIONS = spawn_pattern("Random")
+
 
 MURDER_MODIFIER = 0.2
 
@@ -76,9 +76,9 @@ BLUE_MAN_HEAT_DROP = 50
 PINK_MAN_HEAT_DROP = 0
 
 TEST_ITERATIONS = 8
-TEST_TYPE = 'fire3_4skinnychoke_randomdist_2door' #'4choke' #'4chokenochokedist' # '3chokefat' #'4chokenochoke' #'4choke' #None #'4doors' #None #'door-block' #None #'door' #None#'middlefire' #None #'prop-2exit' #None #'proportion' #None #'capacity'
+TEST_TYPE = None #'fire3_randomdist_1door' #'4choke' #'4chokenochokedist' # '3chokefat' #'4chokenochoke' #'4choke' #None #'4doors' #None #'door-block' #None #'door' #None#'middlefire' #None #'prop-2exit' #None #'proportion' #None #'capacity'
 
-
-TILE_OBSTACLES = obstacle_pattern('2DoorsEarlyChoke')
-TILE_EXITS = exit_pattern("2Doors")
+SPAWN_DIMENSIONS = spawn_pattern("Random")
+TILE_OBSTACLES = obstacle_pattern('Door')
+TILE_EXITS = exit_pattern("BottomMiddle")
 TILE_FIRES = fire_pattern("Top3")
