@@ -101,7 +101,6 @@ choke_4 = '4choke-real.txt'
 choke_4_nochoke = '4choke-nochoke-real.txt'
 choke_3_fat = '3choke-fat.txt'
 choke_4_nochoke_dist = '4choke-nochoke-dist-real.txt'
-fire3_randomdist_1door = 'fire3_randomdist_1door.txt'
 
 #Tests since Panic was altered
 fire3_4skinnychoke_randomdist_2door = "fire3_4skinnychoke_randomdist_2door.txt"
