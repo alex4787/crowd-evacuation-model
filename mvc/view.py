@@ -57,7 +57,7 @@ class View():
         dt = 1/fps
         while True:
             paused = self.update_events(dt, paused)
-            while (not TEST_TYPE or stat_board.remaining_count > 0) and not paused: ## just to trigger tests
+            while (not TEST_TYPE or stat_board.remaining_count > 0) and not paused:
                 paused = self.update_events(dt, paused)
                 self.draw(screen, collections, stat_board)
                 controller.update()   
@@ -65,6 +65,7 @@ class View():
                 ticks_so_far+=1
 
             if test:
+                print("Attempting to write to file {test}\n")
                 if test == 'capacity':
                     f = open("data/capacity-real.txt", 'a')
                     f.write(f'{exit_count} {player_count} {ticks_so_far}\n')
@@ -119,6 +120,10 @@ class View():
                     f.close()
                 if test == 'fire3_randomdist_1door':
                     f = open("data/fire3_randomdist_1door.txt", 'a')
+                    f.write(f'{AGENT_SPEED_1} {AGENT_SPEED_2} {prop} {AGENT_COUNT} {stat_board.crush_count_t1} {stat_board.burn_count_t1} {stat_board.escape_count_t1} {stat_board.crush_count_t2} {stat_board.burn_count_t2} {stat_board.escape_count_t2}\n')
+                    f.close()
+                if test == 'fire3_4skinnychoke_randomdist_1door':
+                    f = open("data/fire3_4skinnychoke_randomdist_1door.txt", 'a')
                     f.write(f'{AGENT_SPEED_1} {AGENT_SPEED_2} {prop} {AGENT_COUNT} {stat_board.crush_count_t1} {stat_board.burn_count_t1} {stat_board.escape_count_t1} {stat_board.crush_count_t2} {stat_board.burn_count_t2} {stat_board.escape_count_t2}\n')
                     f.close()
                     

@@ -85,7 +85,7 @@ def graph_prop_speed(file):
 
     plt.xlabel('Slow Agent Proportion of Total Population', fontsize = 12)
     plt.ylabel('Sub-Population Escape Proportion', fontsize = 12)
-    plt.title('Escape Rate by Agent Speed - 1 Door', fontsize = 20)
+    plt.title('Escape Rate by Agent Speed - 1 Door with Chokes', fontsize = 20)
     plt.legend()
     plt.show()
 
@@ -105,4 +105,6 @@ choke_4_nochoke_dist = '4choke-nochoke-dist-real.txt'
 #Tests since Panic was altered
 fire3_4skinnychoke_randomdist_2door = "fire3_4skinnychoke_randomdist_2door.txt"
 fire3_randomdist_1door = 'fire3_randomdist_1door.txt'
-graph_prop_speed(fire3_randomdist_1door)
+fire3_nochoke_randomdist_2door = 'fire3-nochoke-randomdist-2door.txt'
+fire3_4skinnychoke_randomdist_1door = 'fire3_4skinnychoke_randomdist_1door.txt'
+graph_prop_speed(fire3_4skinnychoke_randomdist_1door)
