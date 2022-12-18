@@ -23,7 +23,6 @@ class People(Rect):
         self._behaviour: Behaviour = behaviour
         self.best_option: Exit = None
         self.exits_in_memory: Dict[int, int] = dict()
-        self.panic = 0
         self.speed = speed
 
     def __hash__(self):
@@ -87,14 +86,12 @@ class People(Rect):
             height: int
             ) -> None:
 
-        self.panic = len(grid.fires) / (len(grid.tiles) * len(grid.tiles[0]))
-
         temp_x = self.x
         temp_y = self.y
 
         availible_exits = self.exits_in_sight(people, exits=exits, tiles=grid.tiles)
         for exit in availible_exits:
-            self.exits_in_memory[exit.id] = 500 # tninker with this value
+            self.exits_in_memory[exit.id] = 500
         exit_ids_to_delete = []
         for exit_id, counter in self.exits_in_memory.items():
             if counter == 0:
