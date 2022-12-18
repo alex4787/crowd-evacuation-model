@@ -24,6 +24,7 @@ class View():
         for row in collections.grid.tiles:
             for tile in row:
                 pygame.draw.rect(screen, tile.tileColor(), tile)
+                # uncomment below line to visualize the memory map
                 #screen.blit(pygame.font.Font('freesansbold.ttf', 16).render(",".join(map(str, tile.exit_distance_map.values())), True, pygame.color.Color("deeppink")), (tile.x, tile.y))
         for exit in collections.grid.exits:
             pygame.draw.rect(screen, exit.color, exit) 
