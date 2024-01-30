@@ -1,7 +1,7 @@
 from game_objects.people import People
 from density_grid import Grid, Tile
 from behaviours import MoveToExit
-from density_grid import Maps, Tiles
+from density_grid import PersonToTileHistoryMap, TileHistory
 from config import *
 
 from typing import List, Tuple
@@ -11,7 +11,7 @@ class Collections:
     def __init__(self, proportion) -> None:
         self.grid: Grid = Grid()
         self.people: List[People] = []
-        self.maps: Maps = Maps()
+        self.maps: PersonToTileHistoryMap = PersonToTileHistoryMap()
         
         self.next_people_id: int = 1
         self.next_exit_id: int = 1
@@ -28,7 +28,7 @@ class Collections:
             self.next_people_id+=1
             tile = self.grid.tiles[person.y//FLOOR][person.x//FLOOR]
             tile.add_person(person)
-            self.maps.person_to_tiles[person] = Tiles(None, tile)
+            self.maps.person_to_tiles[person] = TileHistory(None, tile)
 
 
     def gen_valid_coordinate(self, wh: Tuple[int, int], obstacles: List[Tile], fires: List[Tile]):
