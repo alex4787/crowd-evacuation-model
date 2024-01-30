@@ -44,6 +44,8 @@ def exit_pattern(shape):
         return [(19, 3), (19, 7), (19, 12), (19, 16)]
     if shape == '2Doors' or shape == '2DoorsEarlyChoke':
         return [(19, 5), (19, 14)]
+    if shape == '4DoorsAround':
+        return [(0, 5), (0, 15), (15, 0), (15, 19)]
 
 def spawn_pattern(shape):
     if shape == "Random":
@@ -63,7 +65,7 @@ FIRE_SPREAD_RATE = 0.007
 AGENT_COUNT = 400
 AGENT_SPEED_1 = 3
 AGENT_SPEED_2 = 4
-TIME_ON_EXIT = 10
+TIME_ON_EXIT = 5
 MURDER_MODIFIER = 0.2
 
 BLACK = (0, 0, 0)
@@ -76,9 +78,10 @@ PINK_MAN_HEAT_DROP = 0
 AGENT_SPEED_1_PROPORTIONS = [0, .2, .4, .6, .8, 1]
 TEST_ITERATIONS = 8
 TEST_TYPE = None #'fire3_4skinnychoke_randomdist_1door' #None #fire3_nochoke_randomdist_2door #None #'fire3_randomdist_1door' #'4choke' #'4chokenochokedist' # '3chokefat' #'4chokenochoke' #'4choke' #None #'4doors' #None #'door-block' #None #'door' #None#'middlefire' #None #'prop-2exit' #None #'proportion' #None #'capacity'
+GRAPH_OVER_TIME = True
 
 SPAWN_DIMENSIONS = spawn_pattern("Random")
 TILE_OBSTACLES = obstacle_pattern(None) #+ obstacle_pattern('U')
-TILE_EXITS = exit_pattern("BottomMiddle")
+TILE_EXITS = exit_pattern("4DoorsAround")
 TILE_FIRES = fire_pattern("Top3")
-TILE_BARRIERS = obstacle_pattern("DoorEarlyChoke")
+TILE_BARRIERS = obstacle_pattern(None)

@@ -68,6 +68,16 @@ class View():
             dt = fpsClock.tick(fps)
             ticks_so_far+=1
 
+            # Every second
+            if GRAPH_OVER_TIME and ticks_so_far % 60 == 0:
+                f = open("data/escapees-over-time.txt", 'a')
+                crush_count = stat_board.crush_count_t1 + stat_board.crush_count_t2
+                burn_count = stat_board.burn_count_t1 + stat_board.burn_count_t2
+                escape_count = stat_board.escape_count_t1 + stat_board.escape_count_t2
+                f.write(f'{ticks_so_far} {crush_count} {burn_count} {escape_count}\n')
+                f.close()
+
+
         # Write data if test
         if test:
             print("Attempting to write to file {test}\n")

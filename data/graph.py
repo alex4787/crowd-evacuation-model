@@ -31,6 +31,26 @@ def graph_capacity():
     plt.legend()
     plt.show()
 
+# Graph burn/escapees/crush count (y-axis) over tick count (x-axis) by reading escapees-over-time.txt:
+def graph_over_time(file):
+    col_names = ["tick_count", "crush", "burn", "escape"]
+    df = pd.read_csv(file, sep=" ", names=col_names)
+
+    seconds = df['tick_count'] / 60
+
+    plt.plot(seconds, df['crush'], 'r', label='Number of people crushed')
+    plt.plot(seconds, df['burn'], 'b', label='Number of people burnt')
+    plt.plot(seconds, df['escape'], 'g', label='Number of escapees')
+
+    plt.ylim(bottom=0)
+    plt.xlim([0, seconds.iloc[-1]])
+    plt.grid(True, axis='both', which='major')
+    plt.xlabel('Time elapsed (s)', fontsize=10)
+    plt.ylabel('Number of people', fontsize=10)
+    plt.title('Escapees from evacuation situation over time', fontsize=14)
+    plt.legend()
+    plt.show()
+
 
 def graph_prop_speed(file):
     col_names = ["speed_1", "speed_2", "prop", "total_count", "t1_crush", "t1_burn", "t1_out", "t2_crush", "t2_burn", "t2_out"]
@@ -107,4 +127,5 @@ fire3_4skinnychoke_randomdist_2door = "fire3_4skinnychoke_randomdist_2door.txt"
 fire3_randomdist_1door = 'fire3_randomdist_1door.txt'
 fire3_nochoke_randomdist_2door = 'fire3-nochoke-randomdist-2door.txt'
 fire3_4skinnychoke_randomdist_1door = 'fire3_4skinnychoke_randomdist_1door.txt'
-graph_prop_speed(fire3_4skinnychoke_randomdist_1door)
+# graph_prop_speed(fire3_4skinnychoke_randomdist_1door)
+graph_over_time('escapees-over-time.txt')
