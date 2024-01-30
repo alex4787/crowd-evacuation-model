@@ -60,7 +60,7 @@ class People(Rect):
         
         for row in tiles:
             for tile in row:
-                if tile.is_fire or tile.is_obstacle:
+                if tile.is_fire or tile.is_obstacle: # People CAN see through barriers:
                     if self.is_other_in_the_way(tile, line):
                         return False
         return True

@@ -72,7 +72,7 @@ class BestOption(Behaviour):
                 continue
             if neighbour.density >= MAX_DENSITY:
                 continue
-            if neighbour.is_obstacle:
+            if neighbour.is_obstacle or neighbour.is_barrier:
                 continue
             if not self.best_option and neighbour in traversed_tiles:
                 continue
@@ -84,7 +84,7 @@ class BestOption(Behaviour):
  
         if not neighbour_to_follow and self.best_option:
             for neighbour in prioritized_neighbours[2:4]:
-                if neighbour and neighbour.density < MAX_DENSITY and not neighbour.is_obstacle:
+                if neighbour and neighbour.density < MAX_DENSITY and not (neighbour.is_obstacle or neighbour.is_barrier):
                     neighbour_to_follow = neighbour
         
         if not neighbour_to_follow:

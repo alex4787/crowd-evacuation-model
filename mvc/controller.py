@@ -29,7 +29,7 @@ class Controller:
                     explored_tiles.add(tile)
                     tile.exit_distance_map[exit.id] = distance
                     for neighbour in tile.neighbours.values():
-                        if not neighbour.is_fire and not neighbour.is_obstacle and neighbour not in explored_tiles:
+                        if neighbour.is_open_tile() and neighbour not in explored_tiles:
                             new_frontier.add(neighbour)
                 distance += 1            
                 frontier = list(new_frontier)

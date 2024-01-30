@@ -24,7 +24,7 @@ class MapPath(Behaviour):
         neighbour_to_follow = None
 
         neighbours_to_consider = list(current_tile.neighbours.values())
-        neighbours_to_consider = [neighbour for neighbour in neighbours_to_consider if not neighbour.is_fire and not neighbour.is_obstacle]
+        neighbours_to_consider = [neighbour for neighbour in neighbours_to_consider if neighbour.is_open_tile()]
         random.shuffle(neighbours_to_consider)
 
         # Find prefered tile based on map paths if possible (player must have exits inb memory)
@@ -90,7 +90,7 @@ class MapPath(Behaviour):
             best_safe_tile = None
             best_danger_tile = None
             for tile in current_tile.neighbours.values():
-                if tile.is_obstacle:
+                if tile.is_obstacle or tile.is_barrier:
                     continue
                 if not tile.is_danger and not tile.is_fire:
                     best_safe_tile = tile
