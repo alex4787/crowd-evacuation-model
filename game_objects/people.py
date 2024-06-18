@@ -54,15 +54,23 @@ class People(Rect):
         return True
 
     def is_valid_line_of_sight(self, line: Tuple[Tuple[int, int], Tuple[int, int]], people: List[People], tiles: List[List[Tile]]) -> bool:
-        for other in people: 
-            if not self.is_me(other) and self.is_other_in_the_way(other, line):
-                return False
-        
+        # for other in people:
+        #     if not self.is_me(other) and self.is_other_in_the_way(other, line):
+        #         return False
+        #
+
+        num_over_dense_tiles = 0
+
+        # TODO: Figure out density blocking is not working (maybe we just don't keep it)
         for row in tiles:
             for tile in row:
-                if tile.is_fire or tile.is_obstacle: # People CAN see through barriers:
-                    if self.is_other_in_the_way(tile, line):
-                        return False
+                if (tile.is_fire or tile.is_obstacle) and self.is_other_in_the_way(tile, line): # People CAN see through barriers:
+                    return False
+                if tile.density > MAX_DENSITY and self.is_other_in_the_way(tile, line):
+                    num_over_dense_tiles += 1
+
+                if num_over_dense_tiles >= 1:
+                    return False
         return True
 
     def exits_in_sight(self, people: List[People], exits: List[Exit], tiles: List[List[Tile]]) -> List[Exit]:

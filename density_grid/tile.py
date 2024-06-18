@@ -76,7 +76,7 @@ class Tile(Rect):
         elif self.is_barrier:
             return pygame.color.Color('grey')
         else:
-            #rgb_value = self.density*255/4     # if you wanan see density
-            rgb_value = sum(self.heatmap)       # if you wanna see heat map
-            return (rgb_value, rgb_value, rgb_value) if rgb_value <= 255 else pygame.color.Color('lightcyan')
+            rgb_value = (self.density/MAX_DENSITY)*255     # if you wanna see density
+            # rgb_value = sum(self.heatmap)       # if you wanna see heat map
+            return (rgb_value, rgb_value, rgb_value) if rgb_value <= 255 else pygame.color.Color('pink')
 

@@ -98,24 +98,12 @@ class MapPath(Behaviour):
                     best_danger_tile = tile
 
             neighbour_to_follow = best_safe_tile or best_danger_tile or current_tile
-        
-        # If not in danger, but not currentyl following anyone, pick a new tile
-        elif not self.neighbour_cur_following:
-            neighbour_to_follow = self.choose_neighbour_to_follow(person, current_tile, traversed_tiles)
-            self.neighbour_cur_following = neighbour_to_follow
+                                                                                                            # Any of the following:
+        elif (not self.neighbour_cur_following or                                                           # 1. If not in danger, but not currentyl following anyone, pick a new tile
+              self.neighbour_cur_following == current_tile or                                               # 2. If you are in the tile you were trying to get to, pick a new tile
+              (not self.should_ignore_density and self.neighbour_cur_following.density >= MAX_DENSITY) or   # 3. If the target tile becomes to dense, pick a new one
+              (self.neighbour_cur_following.is_danger or self.neighbour_cur_following.is_fire)):            # 4. if the previous target is now fire or danger, select a new one.
 
-        # If you are in the tile you were trying to get to, pick a new tile
-        elif self.neighbour_cur_following == current_tile:
-            neighbour_to_follow = self.choose_neighbour_to_follow(person, current_tile, traversed_tiles)
-            self.neighbour_cur_following = neighbour_to_follow
-
-        # If the target tile becomes to dense, pick a new one
-        elif not self.should_ignore_density and self.neighbour_cur_following.density >= MAX_DENSITY:
-            neighbour_to_follow = self.choose_neighbour_to_follow(person, current_tile, traversed_tiles)
-            self.neighbour_cur_following = neighbour_to_follow
-
-        # if the previous target is now fire or danger, select a new one.
-        elif self.neighbour_cur_following.is_danger or self.neighbour_cur_following.is_fire:
             neighbour_to_follow = self.choose_neighbour_to_follow(person, current_tile, traversed_tiles)
             self.neighbour_cur_following = neighbour_to_follow
 

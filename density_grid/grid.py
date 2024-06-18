@@ -26,14 +26,20 @@ class Grid():
                     self.tiles[row].append(Tile(col*FLOOR, row*FLOOR))
 
         for row, col in TILE_OBSTACLES:
+            if self.is_exit(row, col):
+                continue
             self.tiles[row][col].is_obstacle = True
             self.obstacles.append(self.tiles[row][col])
 
         for row, col in TILE_BARRIERS:
+            if self.is_exit(row, col):
+                continue
             self.tiles[row][col].is_barrier = True
             self.barriers.append(self.tiles[row][col])
 
         for row, col in TILE_FIRES:
+            if self.is_exit(row, col):
+                continue
             self.tiles[row][col].is_fire = True
             self.fires.append(self.tiles[row][col])
 

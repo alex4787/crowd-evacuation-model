@@ -1,3 +1,4 @@
+import os
 from gc import collect
 import sys
 import pygame
@@ -24,8 +25,15 @@ class View():
         for row in collections.grid.tiles:
             for tile in row:
                 pygame.draw.rect(screen, tile.tileColor(), tile)
-                # uncomment below line to visualize the memory map
-                #screen.blit(pygame.font.Font('freesansbold.ttf', 16).render(",".join(map(str, tile.exit_distance_map.values())), True, pygame.color.Color("deeppink")), (tile.x, tile.y))
+                # uncomment below to see row/col numbers
+                # screen.blit(
+                #     pygame.font.Font('freesansbold.ttf', 16).render(
+                #         f"{tile.y//FLOOR},{tile.x//FLOOR}",
+                #         True,
+                #         pygame.color.Color("deeppink")
+                #     ),
+                #     (tile.x, tile.y)
+                # )
         for exit in collections.grid.exits:
             pygame.draw.rect(screen, exit.color, exit) 
         for person in collections.people:
@@ -35,17 +43,17 @@ class View():
         pygame.display.flip()
 
     
-    def runPyGame(self, test: str = None, prop: float = 0.0) -> None:
+    def runPyGame(self, test: str = None, test_name: str = None, prop: float = 0.0, filename: str = None) -> None:
         pygame.init()
 
-        fps = 60.0
+        fps = 60.0 if DISPLAY else 1000
         fpsClock = pygame.time.Clock()
         width, height = 1000, 1000
 
         screen = pygame.display.set_mode((width, height))
 
-        stat_board = StatBoard(AGENT_COUNT)
         collections = Collections(prop)
+        stat_board = StatBoard(len(collections.people))
         controller = Controller(collections, width, height, stat_board)
 
         #Params for Capacity Tesing
@@ -57,87 +65,40 @@ class View():
 
         dt = 1/fps
 
-        # Pause using <spacebar>
-        paused = self.update_events(dt, paused)
-
+        while True:
         # Main game loop
-        while (not TEST_TYPE or stat_board.remaining_count > 0) and not paused:
             paused = self.update_events(dt, paused)
-            self.draw(screen, collections, stat_board)
-            controller.update()
-            dt = fpsClock.tick(fps)
-            ticks_so_far+=1
 
-            # Every second
-            if GRAPH_OVER_TIME and ticks_so_far % 60 == 0:
-                f = open("data/escapees-over-time.txt", 'a')
-                crush_count = stat_board.crush_count_t1 + stat_board.crush_count_t2
-                burn_count = stat_board.burn_count_t1 + stat_board.burn_count_t2
-                escape_count = stat_board.escape_count_t1 + stat_board.escape_count_t2
-                f.write(f'{ticks_so_far} {crush_count} {burn_count} {escape_count}\n')
-                f.close()
+            while (not TEST_TYPE or stat_board.remaining_count > 0) and not paused:
+                paused = self.update_events(dt, paused)
+                if DISPLAY:
+                    self.draw(screen, collections, stat_board)
+                controller.update()
+                dt = fpsClock.tick(fps)
+                ticks_so_far+=1
+
+                # if ticks_so_far == 1 and DISPLAY:
+                #     paused = True
+
+                # Every second
+                if test == "graph_over_time" and (ticks_so_far % 60 == 0 or stat_board.remaining_count in [0, 1]):
+                    f = open(filename, 'a')
+                    crush_count = stat_board.crush_count_t1 + stat_board.crush_count_t2
+                    burn_count = stat_board.burn_count_t1 + stat_board.burn_count_t2
+                    escape_count = stat_board.escape_count_t1 + stat_board.escape_count_t2
+                    f.write(f'{ticks_so_far} {crush_count} {burn_count} {escape_count}\n')
+                    f.close()
 
 
-        # Write data if test
-        if test:
-            print("Attempting to write to file {test}\n")
-            if test == 'capacity':
-                f = open("data/capacity-real.txt", 'a')
-                f.write(f'{exit_count} {player_count} {ticks_so_far}\n')
-                f.close()
-            if test == 'proportion':
-                f = open("data/speed-proportion-real.txt", 'a')
-                f.write(f'{AGENT_SPEED_1} {AGENT_SPEED_2} {prop} {AGENT_COUNT} {stat_board.crush_count_t1} {stat_board.burn_count_t1} {stat_board.escape_count_t1} {stat_board.crush_count_t2} {stat_board.burn_count_t2} {stat_board.escape_count_t2}\n')
-                f.close()
-            if test == 'prop-2exit':
-                f = open("data/speed-prop-2exit-real.txt", 'a')
-                f.write(f'{AGENT_SPEED_1} {AGENT_SPEED_2} {prop} {AGENT_COUNT} {stat_board.crush_count_t1} {stat_board.burn_count_t1} {stat_board.escape_count_t1} {stat_board.crush_count_t2} {stat_board.burn_count_t2} {stat_board.escape_count_t2}\n')
-                f.close()
-            if test == 'middlefire':
-                f = open("data/middlefire-real.txt", 'a')
-                f.write(f'{AGENT_SPEED_1} {AGENT_SPEED_2} {prop} {AGENT_COUNT} {stat_board.crush_count_t1} {stat_board.burn_count_t1} {stat_board.escape_count_t1} {stat_board.crush_count_t2} {stat_board.burn_count_t2} {stat_board.escape_count_t2}\n')
-                f.close()
-            if test == 'door':
-                f = open("data/door-real.txt", 'a')
-                f.write(f'{AGENT_SPEED_1} {AGENT_SPEED_2} {prop} {AGENT_COUNT} {stat_board.crush_count_t1} {stat_board.burn_count_t1} {stat_board.escape_count_t1} {stat_board.crush_count_t2} {stat_board.burn_count_t2} {stat_board.escape_count_t2}\n')
-                f.close()
-            if test == 'door-block':
-                f = open("data/door-block-real.txt", 'a')
-                f.write(f'{AGENT_SPEED_1} {AGENT_SPEED_2} {prop} {AGENT_COUNT} {stat_board.crush_count_t1} {stat_board.burn_count_t1} {stat_board.escape_count_t1} {stat_board.crush_count_t2} {stat_board.burn_count_t2} {stat_board.escape_count_t2}\n')
-                f.close()
-            if test == '4doors':
-                f = open("data/4Doors-real.txt", 'a')
-                f.write(f'{AGENT_SPEED_1} {AGENT_SPEED_2} {prop} {AGENT_COUNT} {stat_board.crush_count_t1} {stat_board.burn_count_t1} {stat_board.escape_count_t1} {stat_board.crush_count_t2} {stat_board.burn_count_t2} {stat_board.escape_count_t2}\n')
-                f.close()
-            if test == '4choke':
-                f = open("data/4choke-real.txt", 'a')
-                f.write(f'{AGENT_SPEED_1} {AGENT_SPEED_2} {prop} {AGENT_COUNT} {stat_board.crush_count_t1} {stat_board.burn_count_t1} {stat_board.escape_count_t1} {stat_board.crush_count_t2} {stat_board.burn_count_t2} {stat_board.escape_count_t2}\n')
-                f.close()
-            if test == '4chokenochoke':
-                f = open("data/4choke-nochoke-real.txt", 'a')
-                f.write(f'{AGENT_SPEED_1} {AGENT_SPEED_2} {prop} {AGENT_COUNT} {stat_board.crush_count_t1} {stat_board.burn_count_t1} {stat_board.escape_count_t1} {stat_board.crush_count_t2} {stat_board.burn_count_t2} {stat_board.escape_count_t2}\n')
-                f.close()
-            if test == '3chokefat':
-                f = open("data/3choke-fat.txt", 'a')
-                f.write(f'{AGENT_SPEED_1} {AGENT_SPEED_2} {prop} {AGENT_COUNT} {stat_board.crush_count_t1} {stat_board.burn_count_t1} {stat_board.escape_count_t1} {stat_board.crush_count_t2} {stat_board.burn_count_t2} {stat_board.escape_count_t2}\n')
-                f.close()
-            if test == '4chokenochokedist':
-                f = open("data/4choke-nochoke-dist-real.txt", 'a')
-                f.write(f'{AGENT_SPEED_1} {AGENT_SPEED_2} {prop} {AGENT_COUNT} {stat_board.crush_count_t1} {stat_board.burn_count_t1} {stat_board.escape_count_t1} {stat_board.crush_count_t2} {stat_board.burn_count_t2} {stat_board.escape_count_t2}\n')
-                f.close()
-            if test == 'fire3_4skinnychoke_randomdist_2door':
-                f = open("data/fire3_4skinnychoke_randomdist_2door.txt", 'a')
-                f.write(f'{AGENT_SPEED_1} {AGENT_SPEED_2} {prop} {AGENT_COUNT} {stat_board.crush_count_t1} {stat_board.burn_count_t1} {stat_board.escape_count_t1} {stat_board.crush_count_t2} {stat_board.burn_count_t2} {stat_board.escape_count_t2}\n')
-                f.close()
-            if test == 'fire3_nochoke_randomdist_2door':
-                f = open('fire3-nochoke-randomdist-2door.txt', 'a')
-                f.write(f'{AGENT_SPEED_1} {AGENT_SPEED_2} {prop} {AGENT_COUNT} {stat_board.crush_count_t1} {stat_board.burn_count_t1} {stat_board.escape_count_t1} {stat_board.crush_count_t2} {stat_board.burn_count_t2} {stat_board.escape_count_t2}\n')
-                f.close()
-            if test == 'fire3_randomdist_1door':
-                f = open("data/fire3_randomdist_1door.txt", 'a')
-                f.write(f'{AGENT_SPEED_1} {AGENT_SPEED_2} {prop} {AGENT_COUNT} {stat_board.crush_count_t1} {stat_board.burn_count_t1} {stat_board.escape_count_t1} {stat_board.crush_count_t2} {stat_board.burn_count_t2} {stat_board.escape_count_t2}\n')
-                f.close()
-            if test == 'fire3_4skinnychoke_randomdist_1door':
-                f = open("data/fire3_4skinnychoke_randomdist_1door.txt", 'a')
-                f.write(f'{AGENT_SPEED_1} {AGENT_SPEED_2} {prop} {AGENT_COUNT} {stat_board.crush_count_t1} {stat_board.burn_count_t1} {stat_board.escape_count_t1} {stat_board.crush_count_t2} {stat_board.burn_count_t2} {stat_board.escape_count_t2}\n')
-                f.close()
+            # Write data if test
+            if test and not paused:
+                if test == 'capacity':
+                    f = open(filename, 'a')
+                    f.write(f'{exit_count} {player_count} {ticks_so_far}\n')
+                    f.close()
+                if test == 'proportion':
+                    f = open(filename, 'a')
+                    f.write(f'{AGENT_SPEED_1} {AGENT_SPEED_2} {prop} {AGENT_COUNT} {stat_board.crush_count_t1} {stat_board.burn_count_t1} {stat_board.escape_count_t1} {stat_board.crush_count_t2} {stat_board.burn_count_t2} {stat_board.escape_count_t2}\n')
+                    f.close()
+
+                break
