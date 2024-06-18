@@ -5,7 +5,8 @@ from density_grid import PersonToTileHistoryMap, TileHistory
 from config import *
 
 from typing import List, Tuple
-from random import randint
+import random
+
 
 class Collections:
     def __init__(self, proportion) -> None:
@@ -18,8 +19,16 @@ class Collections:
 
         self.proportion = proportion
 
+        occupied = []
+
         for i in range(AGENT_COUNT):
-            x, y = self.gen_valid_coordinate(SPAWN_DIMENSIONS, self.grid.obstacles, self.grid.fires)
+            if ONE_AGENT_PER_TILE:
+                x, y = self.gen_valid_coordinate(SPAWN_DIMENSIONS, self.grid.obstacles, self.grid.fires,
+                                                 self.grid.barriers, occupied=occupied, center=True)
+                if x is None and y is None:
+                    break
+            else:
+                x, y = self.gen_valid_coordinate(SPAWN_DIMENSIONS, self.grid.obstacles, self.grid.fires, self.grid.barriers)
             if i < self.proportion*AGENT_COUNT:
                 person = People(x, y, self.next_people_id, behaviour=None, speed=AGENT_SPEED_1)
             else:
@@ -31,20 +40,25 @@ class Collections:
             self.maps.person_to_tiles[person] = TileHistory(None, tile)
 
 
-    def gen_valid_coordinate(self, wh: Tuple[int, int], obstacles: List[Tile], fires: List[Tile]):
-        width, height = wh[0], wh[1]
-        while True:
-            x, y = randint(0, width-1), randint(0, height-1)
-            in_the_clear = True
-            for obstacle in obstacles:
-                if (obstacle.x//FLOOR, obstacle.y//FLOOR) == (x//FLOOR, y//FLOOR):
-                    in_the_clear = False
-                    break
-            for fire in fires:
-                if (fire.x//FLOOR, fire.y//FLOOR) == (x//FLOOR, y//FLOOR):
-                    in_the_clear = False
-                    break
-            if in_the_clear:
-                return x, y
+    def gen_valid_coordinate(self, valid_tiles: List[Tuple[int, int]], obstacles: List[Tile], fires: List[Tile], barriers: List[Tile], occupied: List[Tuple[int, int]] = None, center: bool = False):
+        if occupied is None:
+            occupied = []
 
-        
+        invalid_tiles = obstacles + fires + barriers
+        invalid_tile_coords = [(tile.x // FLOOR, tile.y // FLOOR) for tile in invalid_tiles]
+        candidate_tiles = list(set(valid_tiles) - set(invalid_tile_coords) - set(occupied))
+
+        if len(candidate_tiles) == 0:
+            return None, None
+
+        chosen = candidate_tiles[random.randint(0, len(candidate_tiles) - 1)]
+        x_floor = chosen[0]
+        y_floor = chosen[1]
+
+        occupied.append((x_floor, y_floor))
+
+        if center:
+            x, y = x_floor * FLOOR + (FLOOR / 2), y_floor * FLOOR + (FLOOR / 2)
+        else:
+            x, y = random.randint(0, FLOOR - 1) + (x_floor * FLOOR), random.randint(0, FLOOR - 1) + (y_floor * FLOOR)
+        return x, y

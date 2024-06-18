@@ -10,8 +10,9 @@ if TYPE_CHECKING:
     from game_objects import People
 
 class Tile(Rect):
-    def __init__(self, x: int, y: int, is_obstacle: bool = False, is_fire: bool = False, is_danger: bool = False) -> None:
+    def __init__(self, x: int, y: int, is_obstacle: bool = False, is_barrier: bool = False, is_fire: bool = False, is_danger: bool = False) -> None:
         self.is_obstacle: bool = is_obstacle
+        self.is_barrier: bool = is_barrier
         self.is_fire: bool = is_fire
         self.is_danger: bool = is_danger
         self.color = (255, 255, 255)
@@ -27,6 +28,9 @@ class Tile(Rect):
 
     def __hash__(self):
         return int(f"{self.x}{self.y}")
+
+    def is_open_tile(self) -> bool:
+        return not (self.is_barrier or self.is_obstacle or self.is_fire)
 
     def update_heatmap(self):
         new_heatmap = []
@@ -69,8 +73,10 @@ class Tile(Rect):
             return pygame.color.Color('orange')
         elif self.is_obstacle:
             return pygame.color.Color('purple')
+        elif self.is_barrier:
+            return pygame.color.Color('grey')
         else:
-            #rgb_value = self.density*255/4     # if you wanan see density
-            rgb_value = sum(self.heatmap)       # if you wanna see heat map
-            return (rgb_value, rgb_value, rgb_value) if rgb_value <= 255 else pygame.color.Color('lightcyan')
+            rgb_value = (self.density/MAX_DENSITY)*255     # if you wanna see density
+            # rgb_value = sum(self.heatmap)       # if you wanna see heat map
+            return (rgb_value, rgb_value, rgb_value) if rgb_value <= 255 else pygame.color.Color('pink')
 

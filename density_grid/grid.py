@@ -11,6 +11,7 @@ class Grid():
     def __init__(self) -> None:
         self.tiles: List[List[Tile]] = []
         self.obstacles: List[Tile] = []
+        self.barriers: List[Tile] = []
         self.fires: List[Tile] = []
         self.exits: List[Exit] = []
 
@@ -25,10 +26,20 @@ class Grid():
                     self.tiles[row].append(Tile(col*FLOOR, row*FLOOR))
 
         for row, col in TILE_OBSTACLES:
+            if self.is_exit(row, col):
+                continue
             self.tiles[row][col].is_obstacle = True
             self.obstacles.append(self.tiles[row][col])
 
+        for row, col in TILE_BARRIERS:
+            if self.is_exit(row, col):
+                continue
+            self.tiles[row][col].is_barrier = True
+            self.barriers.append(self.tiles[row][col])
+
         for row, col in TILE_FIRES:
+            if self.is_exit(row, col):
+                continue
             self.tiles[row][col].is_fire = True
             self.fires.append(self.tiles[row][col])
 
@@ -58,7 +69,7 @@ class Grid():
         did_fire_spread = False
         for fire in self.fires:
             for adj in fire.neighbours.values():
-                if not adj.is_obstacle and not adj.is_fire:
+                if adj.is_open_tile():
                     if random.random() <= FIRE_SPREAD_RATE:
                         adj.is_fire = True
                         adj.is_danger = False
